@@ -4,5 +4,6 @@ func Fill() {
 	List=[]Command{
 		ExitCmd{},
 		HelpCmd{},
+		ApiKeyCmd{},
 	}
 }

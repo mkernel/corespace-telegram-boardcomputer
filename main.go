@@ -9,21 +9,22 @@ import (
 )
 
 var OutputView *gocui.View;
+var Database *gorm.DB;
 
 func main() {
 	filename := os.Args[1];
-	db, _ := gorm.Open("sqlite3",filename);
+	Database, _ = gorm.Open("sqlite3",filename);
 
-	db.AutoMigrate(&GlobalSettings{});
+	Database.AutoMigrate(&GlobalSettings{});
 
 	var settings GlobalSettings;
-	db.First(&settings);
-	if(db.NewRecord(settings)) {
+	Database.First(&settings);
+	if(Database.NewRecord(settings)) {
 		//we have no dataset.
-		db.Create(&settings);
+		Database.Create(&settings);
 	}
 
-	defer db.Close();
+	defer Database.Close();
 	Fill();
 	g, _ := gocui.NewGui(gocui.OutputNormal);
 	g.Cursor = true;
@@ -48,6 +49,7 @@ func layout(g *gocui.Gui) error {
 	maxX,maxY := g.Size();
 	OutputView,_ = g.SetView("content",0,0,maxX-33,maxY-4);
 	OutputView.Wrap = true;
+	OutputView.Autoscroll = true;
 	g.SetView("sidebar",maxX-32,0,maxX-1,maxY-4);
 	v,_ := g.SetView("commandline",0,maxY-3,maxX-1,maxY-1);
 	v.Editable = true;
