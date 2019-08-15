@@ -2,6 +2,7 @@ package main;
 
 import (
 	"github.com/jroimartin/gocui"
+	"fmt"
 )
 
 type ExitCmd struct {}
@@ -15,7 +16,7 @@ func(_ ExitCmd) Description() string {
 }
 
 func(_ ExitCmd) Help(_ []string) {
-
+	fmt.Fprintln(OutputView,"No help available");
 }
 
 func(_ ExitCmd) Execute(_ []string) error {
