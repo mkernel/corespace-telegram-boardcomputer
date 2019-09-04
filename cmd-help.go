@@ -4,34 +4,34 @@ import (
 	"fmt"
 )
 
-type HelpCmd struct {}
+type helpCmd struct{}
 
-func(_ HelpCmd) Command() string {
+func (helpCmd) Command() string {
 	return "help"
 }
 
-func(_ HelpCmd) Description() string {
+func (helpCmd) Description() string {
 	return "shows a list of available commands and executes their help"
 }
 
-func(_ HelpCmd) Help(_ []string) {
-	fmt.Fprintln(OutputView,"Usage: help [Command]");
-	fmt.Fprintln(OutputView,"without Command, lists all available commands");
+func (helpCmd) Help(_ []string) {
+	fmt.Fprintln(outputView, "Usage: help [Command]")
+	fmt.Fprintln(outputView, "without Command, lists all available commands")
 }
 
-func(_ HelpCmd) Execute(args []string) error {
-	if(len(args)==0) {
+func (helpCmd) Execute(args []string) error {
+	if len(args) == 0 {
 		//this is the default case.
-		for _,cmd := range List {
-			fmt.Fprintf(OutputView,"%s - %s\n",cmd.Command(),cmd.Description());
-		} 
+		for _, cmd := range commands {
+			fmt.Fprintf(outputView, "%s - %s\n", cmd.Command(), cmd.Description())
+		}
 	} else {
-		command := args[0];
-		for _,cmd := range List {
-			if(cmd.Command() == command) {
-				cmd.Help(args[1:]);
+		command := args[0]
+		for _, cmd := range commands {
+			if cmd.Command() == command {
+				cmd.Help(args[1:])
 			}
 		}
 	}
-	return nil;
+	return nil
 }

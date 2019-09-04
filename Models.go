@@ -1,10 +1,10 @@
-package main;
+package main
 
 import (
 	"github.com/jinzhu/gorm"
 )
 
-type GlobalSettings struct {
+type globalSettings struct {
 	gorm.Model
-	APIKey string;
+	APIKey string
 }

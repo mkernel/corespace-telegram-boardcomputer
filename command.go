@@ -1,7 +1,6 @@
 package main
 
-
-type Command interface {
+type command interface {
 	Command() string
 	Description() string
 	Help(args []string)

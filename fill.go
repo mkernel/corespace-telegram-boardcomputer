@@ -1,9 +1,9 @@
 package main
 
-func Fill() {
-	List=[]Command{
-		ExitCmd{},
-		HelpCmd{},
-		ApiKeyCmd{},
+func fillCommands() {
+	commands = []command{
+		exitCmd{},
+		helpCmd{},
+		apiKeyCmd{},
 	}
 }

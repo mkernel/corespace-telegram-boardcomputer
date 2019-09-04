@@ -4,35 +4,34 @@ import (
 	"fmt"
 )
 
-type ApiKeyCmd struct {}
+type apiKeyCmd struct{}
 
-
-func(_ ApiKeyCmd) Command() string {
+func (apiKeyCmd) Command() string {
 	return "apikey"
 }
 
-func(_ ApiKeyCmd) Description() string {
+func (apiKeyCmd) Description() string {
 	return "sets the telegram api key."
 }
 
-func(_ ApiKeyCmd) Help(_ []string) {
-	fmt.Fprintln(OutputView,"No help available");
+func (apiKeyCmd) Help(_ []string) {
+	fmt.Fprintln(outputView, "No help available")
 }
 
-func(_ ApiKeyCmd) Execute(args []string) error {
-	var settings GlobalSettings;
-	Database.First(&settings);
-	if(len(args) != 1) {
-		if(settings.APIKey == "") {
-			fmt.Fprintln(OutputView,"No API key set.");
+func (apiKeyCmd) Execute(args []string) error {
+	var settings globalSettings
+	database.First(&settings)
+	if len(args) != 1 {
+		if settings.APIKey == "" {
+			fmt.Fprintln(outputView, "No API key set.")
 		} else {
 			//print the api key instead of setting it.
-			fmt.Fprintf(OutputView,"The API key is: %s\n",settings.APIKey);
+			fmt.Fprintf(outputView, "The API key is: %s\n", settings.APIKey)
 		}
 	} else {
-		settings.APIKey = args[0];
-		Database.Save(&settings);
-		fmt.Fprintln(OutputView,"API key updated. Restart to take effect.");
+		settings.APIKey = args[0]
+		database.Save(&settings)
+		fmt.Fprintln(outputView, "API key updated. Restart to take effect.")
 	}
-	return nil;
+	return nil
 }

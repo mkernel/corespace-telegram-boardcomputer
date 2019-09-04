@@ -1,24 +1,25 @@
-package main;
+package main
 
 import (
-	"github.com/jroimartin/gocui"
 	"fmt"
+
+	"github.com/jroimartin/gocui"
 )
 
-type ExitCmd struct {}
+type exitCmd struct{}
 
-func(_ ExitCmd) Command() string {
+func (exitCmd) Command() string {
 	return "exit"
 }
 
-func(_ ExitCmd) Description() string {
+func (exitCmd) Description() string {
 	return "Shuts down the boardcomputer management console"
 }
 
-func(_ ExitCmd) Help(_ []string) {
-	fmt.Fprintln(OutputView,"No help available");
+func (exitCmd) Help(_ []string) {
+	fmt.Fprintln(outputView, "No help available")
 }
 
-func(_ ExitCmd) Execute(_ []string) error {
+func (exitCmd) Execute(_ []string) error {
 	return gocui.ErrQuit
 }
