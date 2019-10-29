@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -11,12 +12,16 @@ import (
 
 var outputView *gocui.View
 var database *gorm.DB
+var output chan string
 
 func main() {
+	output = make(chan string, 100)
 	filename := os.Args[1]
 	database, _ = gorm.Open("sqlite3", filename)
 
 	database.AutoMigrate(&globalSettings{})
+	database.AutoMigrate(&chat{})
+	database.AutoMigrate(&message{})
 
 	var settings globalSettings
 	database.First(&settings)
@@ -24,6 +29,7 @@ func main() {
 		//we have no dataset.
 		database.Create(&settings)
 	}
+	setupTelegram()
 
 	defer database.Close()
 	fillCommands()
@@ -31,9 +37,18 @@ func main() {
 	g.Cursor = true
 	g.SetManagerFunc(layout)
 	g.SetKeybinding("commandline", gocui.KeyEnter, gocui.ModNone, operatecommand)
-
+	go writeOutput(g)
 	g.MainLoop()
 	g.Close()
+}
+
+func writeOutput(g *gocui.Gui) {
+	for msg := range output {
+		g.Update(func(g *gocui.Gui) error {
+			fmt.Fprintln(outputView, msg)
+			return nil
+		})
+	}
 }
 
 func operatecommand(g *gocui.Gui, v *gocui.View) error {
