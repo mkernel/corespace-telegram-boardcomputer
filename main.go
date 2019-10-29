@@ -19,16 +19,7 @@ func main() {
 	filename := os.Args[1]
 	database, _ = gorm.Open("sqlite3", filename)
 
-	database.AutoMigrate(&globalSettings{})
-	database.AutoMigrate(&chat{})
-	database.AutoMigrate(&message{})
-
-	var settings globalSettings
-	database.First(&settings)
-	if database.NewRecord(settings) {
-		//we have no dataset.
-		database.Create(&settings)
-	}
+	setupDatabase(database)
 	setupTelegram()
 
 	defer database.Close()
