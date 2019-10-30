@@ -49,11 +49,16 @@ func telegramFetcher(updates tgbotapi.UpdatesChannel) {
 			storeduser.TelegramFirstName = incomingmessage.From.FirstName
 			storeduser.TelegramLastName = incomingmessage.From.LastName
 			storeduser.TelegramUserName = incomingmessage.From.UserName
+			storeduser.TelegramChatID = incomingmessage.Chat.ID
 			database.Create(&storeduser)
 		}
 
 		storedmessage := message{Inbound: true, Text: incomingmessage.Text, Date: incomingmessage.Date, ChatID: storeduser.ID, Read: false}
 		database.Create(&storedmessage)
-
+		if activeChatID == storeduser.ID {
+			output <- storedmessage.toString()
+		} else {
+			updateSidebar()
+		}
 	}
 }

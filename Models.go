@@ -16,6 +16,7 @@ type chat struct {
 	TelegramFirstName string
 	TelegramLastName  string
 	TelegramUserName  string
+	TelegramChatID    int64
 	Messages          []message
 }
 

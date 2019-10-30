@@ -5,5 +5,7 @@ func fillCommands() {
 		exitCmd{},
 		helpCmd{},
 		apiKeyCmd{},
+		selectCmd{},
+		sendCmd{},
 	}
 }
