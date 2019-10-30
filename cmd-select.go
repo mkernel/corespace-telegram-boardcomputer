@@ -22,6 +22,14 @@ func (selectCmd) Execute(args []string) error {
 	if len(args) != 1 {
 		return nil
 	}
+	if args[0] == "_" {
+		activeChatID = 0
+		updateSidebar()
+		outputView.Clear()
+		output <- "Back to the machine room"
+		return nil
+	}
+
 	var user chat
 	var count uint
 	database.Model(&chat{}).Where("telegram_user_name = ?", args[0]).First(&user).Count(&count)
