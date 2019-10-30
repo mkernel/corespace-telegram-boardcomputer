@@ -55,9 +55,9 @@ func operatecommand(g *gocui.Gui, v *gocui.View) error {
 	v.SetCursor(0, 0)
 	v.Clear()
 	if inputfocus != nil {
-		result := (*inputfocus).TextEntered(cmd)
+		instance := inputfocus
 		inputfocus = nil
-		return result
+		return (*instance).TextEntered(cmd)
 	}
 	params := strings.Split(cmd, " ")
 	return run(params)
