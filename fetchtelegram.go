@@ -52,7 +52,7 @@ func telegramFetcher(updates tgbotapi.UpdatesChannel) {
 			database.Create(&storeduser)
 		}
 
-		storedmessage := message{Inbound: true, Text: incomingmessage.Text, Date: incomingmessage.Date, ChatID: storeduser.ID}
+		storedmessage := message{Inbound: true, Text: incomingmessage.Text, Date: incomingmessage.Date, ChatID: storeduser.ID, Read: false}
 		database.Create(&storedmessage)
 
 	}

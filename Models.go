@@ -25,6 +25,7 @@ type message struct {
 	Text    string `gorm:"type:text"`
 	Date    int
 	ChatID  uint
+	Read    bool
 }
 
 type crew struct {
