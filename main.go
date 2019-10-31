@@ -57,6 +57,7 @@ func writeOutput(g *gocui.Gui) {
 func operatecommand(g *gocui.Gui, v *gocui.View) error {
 	cmd := v.Buffer()
 	cmd = strings.TrimSuffix(cmd, "\n")
+	v.SetOrigin(0, 0)
 	v.SetCursor(0, 0)
 	v.Clear()
 	if inputfocus != nil {
