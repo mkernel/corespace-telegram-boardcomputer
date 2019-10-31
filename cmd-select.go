@@ -25,6 +25,8 @@ func (selectCmd) Execute(args []string) error {
 	if args[0] == "_" {
 		activeChatID = 0
 		updateSidebar()
+		outputView.SetOrigin(0, 0)
+		outputView.SetCursor(0, 0)
 		outputView.Clear()
 		output <- "Back to the machine room"
 		return nil
@@ -37,6 +39,12 @@ func (selectCmd) Execute(args []string) error {
 		output <- "No chat with that name present"
 	} else {
 		activeChatID = user.ID
+		if user.isLinked() {
+			crew := user.FetchCrew()
+			activeCrewID = crew.ID
+		}
+		outputView.SetOrigin(0, 0)
+		outputView.SetCursor(0, 0)
 		outputView.Clear() //when switching, we clear the output.
 		messages := user.fetchMessages()
 		lastOne := len(messages)

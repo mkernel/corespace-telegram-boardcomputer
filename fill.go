@@ -8,5 +8,8 @@ func fillCommands() {
 		selectCmd{},
 		sendCmd{},
 		crewCmd{},
+		automationCmd{},
+		unlinkCmd{},
+		impersonateCmd{},
 	}
 }

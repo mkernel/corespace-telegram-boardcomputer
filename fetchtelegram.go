@@ -60,5 +60,6 @@ func telegramFetcher(updates tgbotapi.UpdatesChannel) {
 		} else {
 			updateSidebar()
 		}
+		automationqueue <- automationitem{Chat: storeduser, Message: storedmessage}
 	}
 }

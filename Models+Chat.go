@@ -18,6 +18,12 @@ func (chat chat) isLinked() bool {
 	return count > 0
 }
 
+func (chat chat) FetchCrew() crew {
+	var foundCrew crew
+	database.Model(&crew{}).Where("chat_id = ?", chat.ID).First(&foundCrew)
+	return foundCrew
+}
+
 func (chat chat) isCurrent() bool {
 	return chat.ID == activeChatID
 }

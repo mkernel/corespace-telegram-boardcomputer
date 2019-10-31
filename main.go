@@ -18,6 +18,7 @@ var ui *gocui.Gui
 var inputfocus *cmdlinesink
 
 var activeChatID uint
+var activeCrewID uint
 
 func main() {
 	output = make(chan string, 100)
@@ -25,6 +26,7 @@ func main() {
 	database, _ = gorm.Open("sqlite3", filename)
 
 	setupDatabase(database)
+	setupAutomation()
 	setupTelegram()
 
 	defer database.Close()
@@ -55,7 +57,6 @@ func writeOutput(g *gocui.Gui) {
 func operatecommand(g *gocui.Gui, v *gocui.View) error {
 	cmd := v.Buffer()
 	cmd = strings.TrimSuffix(cmd, "\n")
-
 	v.SetCursor(0, 0)
 	v.Clear()
 	if inputfocus != nil {
@@ -63,6 +64,7 @@ func operatecommand(g *gocui.Gui, v *gocui.View) error {
 		inputfocus = nil
 		return (*instance).TextEntered(cmd)
 	}
+	fmt.Fprintf(outputView, "> %s\n", cmd)
 	params := strings.Split(cmd, " ")
 	return run(params)
 }

@@ -6,6 +6,7 @@ import (
 )
 
 type crewCmd struct {
+	mode    string
 	NewName string
 	NewCode string
 }
@@ -22,6 +23,8 @@ func (crewCmd) Help(_ []string) {
 	output <- "crew ls – list all crews"
 	output <- "crew new - creates a new crew"
 	output <- "crew rm ID - deletes a crew"
+	output <- "crew select ID - selects the active crew"
+	output <- "crew status - updates the status of the active crew"
 }
 
 func (command crewCmd) Execute(args []string) error {
@@ -37,6 +40,36 @@ func (command crewCmd) Execute(args []string) error {
 		if args[0] == "rm" {
 			return command.rm(args[1:])
 		}
+		if args[0] == "select" {
+			return command.selectCrew(args[1:])
+		}
+		if args[0] == "status" {
+			return command.status(args[1:])
+		}
+	}
+	return nil
+}
+
+func (command crewCmd) status(args []string) error {
+	command.mode = "status"
+	if activeCrewID == 0 {
+		output <- "no crew selected"
+		return nil
+	}
+	output <- "Enter new Crew Status"
+	var casted cmdlinesink = command
+	inputfocus = &casted
+	return nil
+}
+
+func (crewCmd) selectCrew(args []string) error {
+	if args[0] == "_" {
+		activeCrewID = 0
+		updateSidebar()
+	} else {
+		tmp, _ := strconv.Atoi(args[0])
+		activeCrewID = uint(tmp)
+		updateSidebar()
 	}
 	return nil
 }
@@ -61,6 +94,7 @@ func (crewCmd) rm(args []string) error {
 }
 
 func (command crewCmd) new(args []string) error {
+	command.mode = "new"
 	var casted cmdlinesink = command
 	inputfocus = &casted
 	output <- "Crew Name?"
@@ -68,25 +102,35 @@ func (command crewCmd) new(args []string) error {
 }
 
 func (command crewCmd) TextEntered(data string) error {
-	if command.NewName == "" {
-		command.NewName = data
-		output <- data
-		var casted cmdlinesink = command
-		inputfocus = &casted
-		output <- "Access Code?"
-	} else if command.NewCode == "" {
-		command.NewCode = data
-		output <- data
-		var casted cmdlinesink = command
-		inputfocus = &casted
-		output <- "Crew Description?"
-	} else {
-		output <- data
-		crew := crew{Name: command.NewName, Description: data, Code: command.NewCode}
-		database.Create(&crew)
-		output <- fmt.Sprintf("Crew created with ID %d", crew.ID)
-		command.NewCode = ""
-		command.NewName = ""
+	if command.mode == "new" {
+		if command.NewName == "" {
+			command.NewName = data
+			output <- data
+			var casted cmdlinesink = command
+			inputfocus = &casted
+			output <- "Access Code?"
+		} else if command.NewCode == "" {
+			command.NewCode = data
+			output <- data
+			var casted cmdlinesink = command
+			inputfocus = &casted
+			output <- "Crew Status?"
+		} else {
+			output <- data
+			crew := crew{Name: command.NewName, Description: data, Code: command.NewCode}
+			database.Create(&crew)
+			output <- fmt.Sprintf("Crew created with ID %d", crew.ID)
+			command.NewCode = ""
+			command.NewName = ""
+		}
 	}
+	if command.mode == "status" {
+		var crew crew
+		database.First(&crew, activeCrewID)
+		crew.Description = data
+		database.Save(crew)
+		output <- data
+	}
+
 	return nil
 }
