@@ -7,5 +7,6 @@ func fillCommands() {
 		apiKeyCmd{},
 		selectCmd{},
 		sendCmd{},
+		crewCmd{},
 	}
 }
