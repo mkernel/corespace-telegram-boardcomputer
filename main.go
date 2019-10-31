@@ -41,10 +41,14 @@ func main() {
 
 func writeOutput(g *gocui.Gui) {
 	for msg := range output {
+		updating := true
 		g.Update(func(g *gocui.Gui) error {
 			fmt.Fprintln(outputView, msg)
+			updating = false
 			return nil
 		})
+		for updating {
+		}
 	}
 }
 
