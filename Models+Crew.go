@@ -10,3 +10,14 @@ func (crew crew) fetchInventory() []item {
 	database.Where(&filter).Find(&items)
 	return items
 }
+
+func (crew crew) balance() float64 {
+	var transactions []transaction
+	filter := transaction{CrewID: crew.ID}
+	database.Where(&filter).Find(&transactions)
+	var balance float64
+	for _, tx := range transactions {
+		balance += tx.Value
+	}
+	return balance
+}

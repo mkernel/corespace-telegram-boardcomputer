@@ -55,6 +55,7 @@ func handleUnlinkedMessage(item automationitem) {
 		item.Chat.sendMessage(fmt.Sprintf("Autorisierung bestätigt. Du bist der Captain der %s.", foundCrew.Name))
 		item.Chat.sendMessage("Ich stehe dir jederzeit über eine Reihe von Befehlen zur Verfügung. Sende einfach '/help' für eine Liste.")
 		item.Chat.sendMessage(foundCrew.Description)
+		item.Chat.sendMessage(fmt.Sprintf("Du verfügst über %.2f AU", foundCrew.balance()))
 		//TODO: check for unread messages from contacts and tell about those.
 	}
 }

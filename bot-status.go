@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"strings"
+)
+
 type botStatusCmd struct{}
 
 func (botStatusCmd) Command() string {
@@ -12,5 +17,8 @@ func (botStatusCmd) Description() string {
 
 func (botStatusCmd) Execute(worker automationworker, args []string) {
 	crew := worker.Chat.FetchCrew()
-	worker.Chat.sendMessage(crew.Description)
+	var builder strings.Builder
+	builder.WriteString(crew.Description)
+	builder.WriteString(fmt.Sprintf("\nDer Kontostand beträgt %.2f AU", crew.balance()))
+	worker.Chat.sendMessage(builder.String())
 }

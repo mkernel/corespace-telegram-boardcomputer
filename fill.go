@@ -13,5 +13,6 @@ func fillCommands() {
 		impersonateCmd{},
 		membersCmd{},
 		inventoryCmd{},
+		txCmd{},
 	}
 }
