@@ -16,7 +16,7 @@ func (botCrewCmd) Description() string {
 	return "Zugriff auf die Akten der Mannschaft"
 }
 
-func (botCrewCmd) Execute(worker automationworker, args []string) {
+func (botCrewCmd) Execute(worker *automationworker, args []string) {
 	var members []member
 	crew := worker.Chat.FetchCrew()
 	filter := member{CrewID: crew.ID}

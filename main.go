@@ -19,6 +19,7 @@ var inputfocus *cmdlinesink
 
 var activeChatID uint
 var activeCrewID uint
+var activeContactID uint
 
 func main() {
 	output = make(chan string, 100)

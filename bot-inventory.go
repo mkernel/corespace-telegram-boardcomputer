@@ -15,7 +15,7 @@ func (botInventoryCmd) Description() string {
 	return "Bericht zu Lagervorräten und Ausrüstung"
 }
 
-func (botInventoryCmd) Execute(worker automationworker, args []string) {
+func (botInventoryCmd) Execute(worker *automationworker, args []string) {
 	items := worker.Chat.FetchCrew().fetchInventory()
 	var builder strings.Builder
 	builder.WriteString(fmt.Sprintf("Wir haben %d Gegenstände eingelagert.\n", len(items)))

@@ -22,6 +22,10 @@ func (worker *automationworker) start() {
 		botCrewCmd{},
 		botStatusCmd{},
 		botInventoryCmd{},
+		botContactsCmd{},
+		botInfoCmd{},
+		botReadCmd{},
+		botWriteCmd{},
 	}
 	go worker.work()
 }
@@ -33,8 +37,8 @@ func (worker *automationworker) work() {
 			worker.CurrentFocus = nil
 			(*backup).OnMessage(*worker, message)
 			message.Read = true
-			updateSidebar()
 			database.Save(&message)
+			updateSidebar()
 		} else if message.Text[0] == '/' {
 			//it starts with / so it will be a command.
 			message.Read = true
@@ -44,7 +48,7 @@ func (worker *automationworker) work() {
 			found := false
 			for _, cmd := range worker.Commands {
 				if cmd.Command() == args[0] {
-					cmd.Execute(*worker, args[1:])
+					cmd.Execute(worker, args[1:])
 					found = true
 					break
 				}

@@ -63,6 +63,7 @@ func (command crewCmd) status(args []string) error {
 }
 
 func (crewCmd) selectCrew(args []string) error {
+	activeContactID = 0
 	if args[0] == "_" {
 		activeCrewID = 0
 		updateSidebar()

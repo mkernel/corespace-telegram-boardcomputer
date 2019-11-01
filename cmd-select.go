@@ -38,6 +38,7 @@ func (selectCmd) Execute(args []string) error {
 	if count == 0 {
 		output <- "No chat with that name present"
 	} else {
+		activeContactID = 0
 		activeChatID = user.ID
 		if user.isLinked() {
 			crew := user.FetchCrew()

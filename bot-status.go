@@ -15,7 +15,7 @@ func (botStatusCmd) Description() string {
 	return "Kurzzusammenfassung der Situation"
 }
 
-func (botStatusCmd) Execute(worker automationworker, args []string) {
+func (botStatusCmd) Execute(worker *automationworker, args []string) {
 	crew := worker.Chat.FetchCrew()
 	var builder strings.Builder
 	builder.WriteString(crew.Description)

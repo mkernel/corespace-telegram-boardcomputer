@@ -56,6 +56,10 @@ func handleUnlinkedMessage(item automationitem) {
 		item.Chat.sendMessage("Ich stehe dir jederzeit über eine Reihe von Befehlen zur Verfügung. Sende einfach '/help' für eine Liste.")
 		item.Chat.sendMessage(foundCrew.Description)
 		item.Chat.sendMessage(fmt.Sprintf("Du verfügst über %.2f AU", foundCrew.balance()))
-		//TODO: check for unread messages from contacts and tell about those.
+		var count uint
+		database.Model(&spacemail{}).Where("crew_id = ? and inbound = ? and read = ?", foundCrew.ID, true, false).Count(&count)
+		if count > 0 {
+			item.Chat.sendMessage("Es gibt ungelesene Nachrichten.")
+		}
 	}
 }

@@ -14,5 +14,6 @@ func fillCommands() {
 		membersCmd{},
 		inventoryCmd{},
 		txCmd{},
+		contactsCmd{},
 	}
 }

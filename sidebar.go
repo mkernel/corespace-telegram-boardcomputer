@@ -31,12 +31,29 @@ func updateSidebar() {
 		fmt.Fprintln(sidebar, "Crews:")
 		var crews []crew
 		database.Find(&crews)
+		var activeCrew crew
 		for _, crew := range crews {
 			current := " "
 			if crew.isCurrent() {
 				current = ">"
+				activeCrew = crew
 			}
 			fmt.Fprintf(sidebar, "%s %s (%s)\n", current, crew.Name, crew.Code)
+		}
+		if activeCrewID != 0 {
+			fmt.Fprintln(sidebar, "")
+			fmt.Fprintln(sidebar, "Contacts:")
+			for _, contact := range activeCrew.fetchContacts() {
+				current := " "
+				if contact.isCurrent() {
+					current = ">"
+				}
+				unread := ""
+				if contact.numContactUnread() > 0 {
+					unread = "*"
+				}
+				fmt.Fprintf(sidebar, "%s %s%s\n", current, contact.Name, unread)
+			}
 		}
 		return nil
 	})
