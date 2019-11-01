@@ -123,6 +123,7 @@ func (command crewCmd) TextEntered(data string) error {
 			output <- fmt.Sprintf("Crew created with ID %d", crew.ID)
 			command.NewCode = ""
 			command.NewName = ""
+			updateSidebar()
 		}
 	}
 	if command.mode == "status" {

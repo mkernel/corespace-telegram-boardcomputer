@@ -11,7 +11,7 @@ func (botInfoCmd) Description() string {
 }
 
 func (botInfoCmd) Execute(worker *automationworker, args []string) {
-	filter := contact{CrewID: worker.Chat.FetchCrew().ID, Name: args[0]}
+	filter := contact{OwnerID: worker.Chat.FetchCrew().ID, Name: args[0]}
 	var found contact
 	database.Where(&filter).First(&found)
 	worker.Chat.sendMessage(found.Description)

@@ -1,5 +1,7 @@
 package main
 
+import "strconv"
+
 type contactsCmd struct {
 	Mode      string
 	Name      string
@@ -50,7 +52,7 @@ func (contactsCmd) cmdSelect(args []string) error {
 		return nil
 	}
 	var hit contact
-	filter := contact{CrewID: activeCrewID, Name: args[0]}
+	filter := contact{OwnerID: activeCrewID, Name: args[0]}
 	database.Where(&filter).First(&hit)
 	activeChatID = 0
 	activeContactID = hit.ID
@@ -75,14 +77,16 @@ func (cmd contactsCmd) cmdNew(args []string) error {
 }
 
 func (contactsCmd) cmdLink(args []string) error {
-	output <- "This has not been implemented yet. Will do that up next"
-	//TODO: implement linking crews
+	destinationid, _ := strconv.Atoi(args[1])
+	newContact := contact{OwnerID: activeCrewID, Name: args[0], CrewID: uint(destinationid)}
+	database.Create(&newContact)
+	updateSidebar()
 	return nil
 }
 
 func (contactsCmd) cmdRm(args []string) error {
 	var hit contact
-	filter := contact{CrewID: activeCrewID, Name: args[0]}
+	filter := contact{OwnerID: activeCrewID, Name: args[0]}
 	database.Where(&filter).First(&hit)
 	database.Delete(&hit)
 	updateSidebar()
@@ -91,18 +95,19 @@ func (contactsCmd) cmdRm(args []string) error {
 
 func (cmd contactsCmd) cmdUpdate(args []string) error {
 	var hit contact
-	filter := contact{CrewID: activeCrewID, Name: args[0]}
+	filter := contact{OwnerID: activeCrewID, Name: args[0]}
 	database.Where(&filter).First(&hit)
-	cmd.Mode = "udpate"
+	cmd.Mode = "update"
 	cmd.ContactID = hit.ID
 	var casted cmdlinesink = cmd
 	inputfocus = &casted
+	output <- "Description?"
 	return nil
 }
 
 func (contactsCmd) cmdInfo(args []string) error {
 	var hit contact
-	filter := contact{CrewID: activeCrewID, Name: args[0]}
+	filter := contact{OwnerID: activeCrewID, Name: args[0]}
 	database.Where(&filter).First(&hit)
 	output <- hit.Description
 	return nil
@@ -111,11 +116,10 @@ func (contactsCmd) cmdInfo(args []string) error {
 func (cmd contactsCmd) TextEntered(data string) error {
 	if cmd.Mode == "new" {
 		output <- data
-		contact := contact{CrewID: activeCrewID, Name: cmd.Name, Description: data}
+		contact := contact{OwnerID: activeCrewID, Name: cmd.Name, Description: data}
 		database.Create(&contact)
 		updateSidebar()
-	}
-	if cmd.Mode == "update" {
+	} else if cmd.Mode == "update" {
 		output <- data
 		var contact contact
 		database.First(&contact, cmd.ContactID)

@@ -48,11 +48,15 @@ func updateSidebar() {
 				if contact.isCurrent() {
 					current = ">"
 				}
+				linked := " "
+				if contact.CrewID != 0 {
+					linked = "|"
+				}
 				unread := ""
 				if contact.numContactUnread() > 0 {
 					unread = "*"
 				}
-				fmt.Fprintf(sidebar, "%s %s%s\n", current, contact.Name, unread)
+				fmt.Fprintf(sidebar, "%s%s%s%s\n", current, linked, contact.Name, unread)
 			}
 		}
 		return nil

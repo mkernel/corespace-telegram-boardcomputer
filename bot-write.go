@@ -15,7 +15,7 @@ func (botWriteCmd) Description() string {
 }
 
 func (cmd botWriteCmd) Execute(worker *automationworker, args []string) {
-	filter := contact{CrewID: worker.Chat.FetchCrew().ID, Name: args[0]}
+	filter := contact{OwnerID: worker.Chat.FetchCrew().ID, Name: args[0]}
 	var found contact
 	database.Where(&filter).First(&found)
 	cmd.ContactID = found.ID
@@ -25,13 +25,22 @@ func (cmd botWriteCmd) Execute(worker *automationworker, args []string) {
 }
 
 func (cmd botWriteCmd) OnMessage(worker automationworker, msg message) {
-	//TODO: support linked contacts
-	var contact contact
-	database.First(&contact, cmd.ContactID)
-	spacemail := spacemail{CrewID: contact.CrewID, ContactID: cmd.ContactID, Inbound: false, Read: false, Date: int(time.Now().Unix()), Text: msg.Text}
-	database.Create(&spacemail)
+	var destcontact contact
+	database.First(&destcontact, cmd.ContactID)
+	mail := spacemail{CrewID: destcontact.OwnerID, ContactID: cmd.ContactID, Inbound: false, Read: false, Date: int(time.Now().Unix()), Text: msg.Text}
+	database.Create(&mail)
+	if destcontact.CrewID != 0 {
+		//this is a linked contact. So we have to duplicate the spacemail over to the other crew.
+		var mirrorcontact contact
+		database.Where(&contact{OwnerID: destcontact.CrewID, CrewID: destcontact.OwnerID}).First(&mirrorcontact)
+		mirrormail := spacemail{CrewID: mirrorcontact.OwnerID, ContactID: mirrorcontact.ID, Inbound: true, Read: false, Date: int(time.Now().Unix()), Text: msg.Text}
+		database.Create(&mirrormail)
+		if activeContactID == mirrorcontact.ID {
+			output <- mail.toString()
+		}
+	}
 	if activeContactID == cmd.ContactID {
-		output <- spacemail.toString()
+		output <- mail.toString()
 	}
 	updateSidebar()
 	worker.Chat.sendMessage("Ich habe die Nachricht übertragen.")

@@ -35,7 +35,7 @@ func (sendCmd) TextEntered(data string) error {
 		database.First(&user, activeChatID)
 		user.sendMessage(data)
 	} else if activeContactID != 0 {
-		//TODO: implement linked crews
+		//technical, we should opt for "not for linked contacts"
 		dataset := spacemail{CrewID: activeCrewID, ContactID: activeContactID, Inbound: true, Date: int(time.Now().Unix()), Text: data, Read: false}
 		database.Create(&dataset)
 		output <- dataset.toString()

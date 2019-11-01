@@ -23,7 +23,7 @@ func (crew crew) balance() float64 {
 }
 func (crew crew) fetchContacts() []contact {
 	var contacts []contact
-	filter := contact{CrewID: crew.ID}
+	filter := contact{OwnerID: crew.ID}
 	database.Where(&filter).Order("name asc").Find(&contacts)
 	return contacts
 }
