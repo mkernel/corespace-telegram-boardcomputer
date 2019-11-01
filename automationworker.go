@@ -20,6 +20,7 @@ func (worker *automationworker) start() {
 	worker.Commands = []botCommand{
 		botHelpCmd{},
 		botCrewCmd{},
+		botStatusCmd{},
 	}
 	go worker.work()
 }
