@@ -9,9 +9,11 @@ type automationitem struct {
 
 var automationqueue chan automationitem
 var automationenabled map[uint]bool
+var automationqueues map[uint]*automationworker
 
 func setupAutomation() {
 	automationenabled = make(map[uint]bool)
+	automationqueues = make(map[uint]*automationworker)
 	automationqueue = make(chan automationitem, 100)
 	go automationWorker()
 }
@@ -29,6 +31,12 @@ func automationWorker() {
 				handleUnlinkedMessage(item)
 			} else {
 				//here we will handle linked accounts. As this got more complex we will spin off goroutines here, but not now.
+				worker, ok := automationqueues[item.Chat.ID]
+				if !ok {
+					worker = newWorker(item.Chat)
+					automationqueues[item.Chat.ID] = worker
+				}
+				worker.Queue <- item.Message
 			}
 		}
 	}

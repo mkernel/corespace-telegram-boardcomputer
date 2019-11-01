@@ -95,7 +95,7 @@ func (command membersCmd) TextEntered(data string) error {
 			output <- data
 			newMember := member{CrewID: activeCrewID, Name: command.Name}
 			database.Save(&newMember)
-			filename := fmt.Sprintf("assets/member_%d.png", newMember.ID)
+			filename := newMember.Filename()
 			source, _ := os.Open(data)
 			defer source.Close()
 			destination, _ := os.Create(filename)
@@ -107,7 +107,7 @@ func (command membersCmd) TextEntered(data string) error {
 		output <- data
 		var member member
 		database.First(&member, command.MemberID)
-		filename := fmt.Sprintf("assets/member_%d.png", member.ID)
+		filename := member.Filename()
 		os.Remove(filename)
 		source, _ := os.Open(data)
 		defer source.Close()
