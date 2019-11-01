@@ -11,5 +11,6 @@ func fillCommands() {
 		automationCmd{},
 		unlinkCmd{},
 		impersonateCmd{},
+		membersCmd{},
 	}
 }
