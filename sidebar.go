@@ -33,7 +33,7 @@ func updateSidebar() {
 		database.Find(&crews)
 		var activeCrew crew
 		for _, crew := range crews {
-			current := " "
+			current := fmt.Sprintf("%d", crew.ID)
 			if crew.isCurrent() {
 				current = ">"
 				activeCrew = crew
