@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -49,11 +50,17 @@ func telegramFetcher(updates tgbotapi.UpdatesChannel) {
 			storeduser.TelegramFirstName = incomingmessage.From.FirstName
 			storeduser.TelegramLastName = incomingmessage.From.LastName
 			storeduser.TelegramUserName = incomingmessage.From.UserName
+			if storeduser.TelegramUserName == "" {
+				storeduser.TelegramUserName = storeduser.TelegramFirstName
+			}
+			if storeduser.TelegramUserName == "" {
+				storeduser.TelegramUserName = storeduser.TelegramLastName
+			}
 			storeduser.TelegramChatID = incomingmessage.Chat.ID
 			database.Create(&storeduser)
 		}
 
-		storedmessage := message{Inbound: true, Text: incomingmessage.Text, Date: incomingmessage.Date, ChatID: storeduser.ID, Read: false}
+		storedmessage := message{Inbound: true, Text: incomingmessage.Text, Date: int(time.Now().Unix()), ChatID: storeduser.ID, Read: false}
 		database.Create(&storedmessage)
 		if activeChatID == storeduser.ID {
 			output <- storedmessage.toString()

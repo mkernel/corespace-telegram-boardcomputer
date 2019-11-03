@@ -30,7 +30,7 @@ func (chat chat) isCurrent() bool {
 
 func (chat chat) fetchMessages() []message {
 	var messages []message
-	database.Model(&message{}).Where(&message{ChatID: chat.ID}).Order("date asc").Find(&messages)
+	database.Model(&message{}).Where(&message{ChatID: chat.ID}).Order("id asc").Find(&messages)
 	return messages
 }
 
