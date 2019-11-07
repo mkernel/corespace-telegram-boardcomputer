@@ -18,6 +18,7 @@ type chat struct {
 	TelegramUserName  string
 	TelegramChatID    int64
 	Messages          []message
+	OpenConnection    bool
 }
 
 type message struct {

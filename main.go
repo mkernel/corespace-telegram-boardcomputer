@@ -32,6 +32,14 @@ func main() {
 
 	defer database.Close()
 	fillCommands()
+	//before we start, we have to disconnect everyone from after being connected during a crash.
+	var chats []chat
+	database.Where(&chat{OpenConnection: true}).Find(&chats)
+	for _, chat := range chats {
+		chat.OpenConnection = false
+		database.Save(&chat)
+		chat.sendMessage("Die Verbindung wurde unterbrochen")
+	}
 	g, _ := gocui.NewGui(gocui.OutputNormal)
 	ui = g
 	g.Cursor = true

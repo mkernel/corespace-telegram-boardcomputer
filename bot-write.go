@@ -30,7 +30,7 @@ func (cmd botWriteCmd) Execute(worker *automationworker, args []string) {
 	worker.CurrentFocus = &casted
 }
 
-func (cmd botWriteCmd) OnMessage(worker automationworker, msg message) {
+func (cmd botWriteCmd) OnMessage(worker *automationworker, msg message) {
 	var destcontact contact
 	database.First(&destcontact, cmd.ContactID)
 	destcontact.sendMessageToContact(msg.Text)
