@@ -17,6 +17,11 @@ func newWorker(chat chat) *automationworker {
 
 func (worker *automationworker) start() {
 	worker.Queue = make(chan message, 100)
+	worker.setDefaultCommandSet()
+	go worker.work()
+}
+
+func (worker *automationworker) setDefaultCommandSet() {
 	worker.Commands = []botCommand{
 		botHelpCmd{},
 		botCrewCmd{},
@@ -25,20 +30,17 @@ func (worker *automationworker) start() {
 		botContactsCmd{},
 		botInfoCmd{},
 		botWriteCmd{},
+		botConnectCmd{},
 	}
-	go worker.work()
+}
+
+func (worker *automationworker) setCommandSet(commands []botCommand) {
+	worker.Commands = commands
 }
 
 func (worker *automationworker) work() {
 	for message := range worker.Queue {
-		if worker.CurrentFocus != nil {
-			backup := worker.CurrentFocus
-			worker.CurrentFocus = nil
-			(*backup).OnMessage(*worker, message)
-			message.Read = true
-			database.Save(&message)
-			updateSidebar()
-		} else if message.Text[0] == '/' {
+		if message.Text[0] == '/' {
 			//it starts with / so it will be a command.
 			message.Read = true
 			database.Save(&message)
@@ -55,6 +57,13 @@ func (worker *automationworker) work() {
 			if !found {
 				worker.Chat.sendMessage("Den Befehl habe ich leider nicht verstanden. Versuche es einmal mit /help")
 			}
+		} else if worker.CurrentFocus != nil {
+			backup := worker.CurrentFocus
+			worker.CurrentFocus = nil
+			(*backup).OnMessage(worker, message)
+			message.Read = true
+			database.Save(&message)
+			updateSidebar()
 		}
 	}
 }

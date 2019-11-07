@@ -7,5 +7,5 @@ type botCommand interface {
 }
 
 type botDataSink interface {
-	OnMessage(automationworker, message)
+	OnMessage(*automationworker, message)
 }
