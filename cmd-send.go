@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 )
 
 type sendCmd struct{}
@@ -36,16 +35,9 @@ func (sendCmd) TextEntered(data string) error {
 		user.sendMessage(data)
 	} else if activeContactID != 0 {
 		//technical, we should opt for "not for linked contacts"
-		dataset := spacemail{CrewID: activeCrewID, ContactID: activeContactID, Inbound: true, Date: int(time.Now().Unix()), Text: data, Read: false}
-		database.Create(&dataset)
-		output <- dataset.toString()
-		var crew crew
-		database.Preload("Chat").First(&crew, activeCrewID)
-		if crew.ChatID != 0 {
-			var contact contact
-			database.First(&contact, activeContactID)
-			crew.Chat.sendMessage(dataset.toString())
-		}
+		var destination contact
+		database.First(&destination, activeContactID)
+		destination.sendMessageToCrew(data)
 	}
 	return nil
 }

@@ -11,9 +11,15 @@ func (message *spacemail) print(view *gocui.View) {
 }
 
 func (message *spacemail) toString() string {
-	username := "<Crew>"
+	username := "<??>"
 	if message.Inbound {
-		username = "<Contact>"
+		var c contact
+		database.First(&c, message.ContactID)
+		username = fmt.Sprintf("<%s>", c.Name)
+	} else {
+		var c crew
+		database.First(&c, message.CrewID)
+		username = fmt.Sprintf("<%s>", c.Name)
 	}
 	result := fmt.Sprintf("%s: %s", username, message.Text)
 	if message.Read == false && message.Inbound == false {
