@@ -15,5 +15,6 @@ func fillCommands() {
 		inventoryCmd{},
 		txCmd{},
 		contactsCmd{},
+		broadcastCmd{},
 	}
 }

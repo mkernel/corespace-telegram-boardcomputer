@@ -44,7 +44,7 @@ func (sendCmd) TextEntered(data string) error {
 		if crew.ChatID != 0 {
 			var contact contact
 			database.First(&contact, activeContactID)
-			crew.Chat.sendMessage(fmt.Sprintf("Ich habe eine Nachricht von %s empfangen.", contact.Name))
+			crew.Chat.sendMessage(dataset.toString())
 		}
 	}
 	return nil

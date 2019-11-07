@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -52,7 +51,7 @@ func (cmd botWriteCmd) OnMessage(worker automationworker, msg message) {
 		var crew crew
 		database.Preload("Chat").First(&crew, destcontact.CrewID)
 		if crew.ChatID != 0 {
-			crew.Chat.sendMessage(fmt.Sprintf("Ich habe eine Nachricht von %s empfangen.", mirrorcontact.Name))
+			crew.Chat.sendMessage(mirrormail.toString())
 		}
 	}
 	if activeContactID == cmd.ContactID {

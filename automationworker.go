@@ -24,7 +24,6 @@ func (worker *automationworker) start() {
 		botInventoryCmd{},
 		botContactsCmd{},
 		botInfoCmd{},
-		botReadCmd{},
 		botWriteCmd{},
 	}
 	go worker.work()
