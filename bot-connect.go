@@ -57,5 +57,7 @@ func (cmd botDisconnectCmd) Description() string {
 func (cmd botDisconnectCmd) Execute(worker *automationworker, artgs []string) {
 	worker.CurrentFocus = nil
 	worker.Chat.sendMessage("Verbindung getrennt")
+	worker.Chat.OpenConnection = false
+	database.Save(&worker.Chat)
 	worker.setDefaultCommandSet()
 }
