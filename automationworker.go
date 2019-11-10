@@ -31,6 +31,7 @@ func (worker *automationworker) setDefaultCommandSet() {
 		botInfoCmd{},
 		botWriteCmd{},
 		botConnectCmd{},
+		botCallCmd{},
 	}
 }
 
@@ -64,6 +65,6 @@ func (worker *automationworker) work() {
 			message.Read = true
 			database.Save(&message)
 			updateSidebar()
-		}
+		} //TODO: check for ongoing conference and transmit if needed
 	}
 }

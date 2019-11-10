@@ -8,20 +8,14 @@ func (me contact) isCurrent() bool {
 
 func (me contact) fetchSpacemail() []spacemail {
 	var mails []spacemail
-	filter := spacemail{CrewID: me.OwnerID, ContactID: me.ID}
+	filter := spacemail{ContactID: me.ID}
 	database.Where(&filter).Order("date asc").Find(&mails)
 	return mails
 }
 
-func (me contact) numCrewUnread() int {
-	var numUnread uint
-	database.Model(&spacemail{}).Where("crew_id = ? and contact_id = ? and inbound = ? and read = ?", me.OwnerID, me.ID, true, false).Count(&numUnread)
-	return int(numUnread)
-}
-
 func (me contact) numContactUnread() int {
 	var numUnread uint
-	database.Model(&spacemail{}).Where("crew_id = ? and contact_id = ? and inbound = ? and read = ?", me.OwnerID, me.ID, false, false).Count(&numUnread)
+	database.Model(&spacemail{}).Where("contact_id = ? and inbound = ? and read = ?", me.ID, false, false).Count(&numUnread)
 	return int(numUnread)
 }
 

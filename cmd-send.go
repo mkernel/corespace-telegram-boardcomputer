@@ -30,6 +30,7 @@ func (sendcommand sendCmd) Execute(args []string) error {
 
 func (sendCmd) TextEntered(data string) error {
 	if activeChatID != 0 {
+		//TODO: check if on call and send to conference system
 		var user chat
 		database.First(&user, activeChatID)
 		user.sendMessage(data)
