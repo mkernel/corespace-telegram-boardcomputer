@@ -45,3 +45,13 @@ func (me contact) sendMessageToCrew(text string) {
 	}
 
 }
+
+func fetchContactByName(name string, crew crew) *contact {
+	search := contact{Name: name, OwnerID: crew.ID}
+	var found contact
+	database.Where(&search).First(&found)
+	if database.NewRecord(&found) {
+		return nil
+	}
+	return &found
+}

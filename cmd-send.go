@@ -30,7 +30,6 @@ func (sendcommand sendCmd) Execute(args []string) error {
 
 func (sendCmd) TextEntered(data string) error {
 	if activeChatID != 0 {
-		//TODO: check if on call and send to conference system
 		var user chat
 		database.First(&user, activeChatID)
 		user.sendMessage(data)
@@ -38,7 +37,11 @@ func (sendCmd) TextEntered(data string) error {
 		//technical, we should opt for "not for linked contacts"
 		var destination contact
 		database.First(&destination, activeContactID)
-		destination.sendMessageToCrew(data)
+		if conferences.isContactInOngoingCall(destination) {
+			conferences.transmitFromContact(destination, data)
+		} else {
+			destination.sendMessageToCrew(data)
+		}
 	}
 	return nil
 }

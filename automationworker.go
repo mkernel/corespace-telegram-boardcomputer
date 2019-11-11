@@ -65,6 +65,8 @@ func (worker *automationworker) work() {
 			message.Read = true
 			database.Save(&message)
 			updateSidebar()
-		} //TODO: check for ongoing conference and transmit if needed
+		} else if conferences.isCrewInOngoingCall(worker.Chat.FetchCrew()) {
+			conferences.transmitFromCrew(worker.Chat.FetchCrew(), message.Text)
+		}
 	}
 }

@@ -67,13 +67,22 @@ func (mgr *conferenceMgr) acceptCall(crew crew) {
 	conference.accept(crew)
 }
 
+func (mgr *conferenceMgr) rejectCall(crew crew) {
+	conference := mgr.findConferenceForCrew(crew)
+	if conference == nil {
+		return
+	}
+	conference.reject(crew)
+	//TODO: should we tell people of the rejection? not sure...
+}
+
 func (mgr *conferenceMgr) hangup(crew crew) {
 	conference := mgr.findConferenceForCrew(crew)
 	if conference == nil {
 		return
 	}
 	conference.hangup(crew)
-	//TODO: check if there are crews left. if not, discard the conference
+	//TODO: check if there are crews left. if not, discard the conference. if there are ringing crews left: clear them up.
 }
 
 func (mgr *conferenceMgr) isCrewInOngoingCall(crew crew) bool {
@@ -110,6 +119,15 @@ func (cf *conference) accept(crew crew) {
 	}
 }
 
+func (cf *conference) reject(crew crew) {
+	for i, calling := range cf.RingingCrews {
+		if calling.ID == crew.ID {
+			cf.RingingCrews = append(cf.RingingCrews[:i], cf.RingingCrews[i+1:]...)
+			return
+		}
+	}
+}
+
 func (cf *conference) hangup(crew crew) {
 	for i, calling := range cf.InvolvedCrews {
 		if calling.ID == crew.ID {
@@ -130,12 +148,17 @@ func (cf *conference) transmitForCrew(crew crew, text string) {
 	for _, contact := range cf.InvolvedNSCs {
 		spacemail := spacemail{CrewID: crew.ID, ContactID: contact.ID, Text: text, Inbound: false, Read: false, Date: int(time.Now().Unix())}
 		database.Create(&spacemail)
-		//TODO: update the UI
+		updateSidebar()
+		if contact.ID == activeContactID {
+			output <- spacemail.toString()
+		}
 	}
 }
 
 func (cf *conference) transmitForContact(contact contact, text string) {
-	//TODO: we need to save the message for the contact himself.
+	protocol := spacemail{CrewID: contact.OwnerID, ContactID: contact.ID, Text: text, Date: int(time.Now().Unix()), Inbound: true, Read: true}
+	database.Create(&protocol)
+
 	for _, oncall := range cf.InvolvedCrews {
 		if oncall.ChatID != 0 {
 			var chat chat
@@ -147,7 +170,10 @@ func (cf *conference) transmitForContact(contact contact, text string) {
 		if oncall.ID != contact.ID {
 			spacemail := spacemail{CrewID: oncall.OwnerID, ContactID: oncall.ID, Text: fmt.Sprintf("<%s> %s", contact.Name, text), Inbound: false, Read: false, Date: int(time.Now().Unix())}
 			database.Create(&spacemail)
-			//TODO: update the UI
+			updateSidebar()
+			if contact.ID == activeContactID {
+				output <- spacemail.toString()
+			}
 		}
 	}
 }

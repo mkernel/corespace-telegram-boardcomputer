@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 //basic idea: when you get one of those, the system updates the command list.
 
 // /call implementation
@@ -15,7 +17,30 @@ func (cmd botCallCmd) Description() string {
 }
 
 func (cmd botCallCmd) Execute(worker *automationworker, args []string) {
-	//TODO: implement /call
+	var ringingCrews []crew = make([]crew, 0)
+	var ringingNSCs []contact = make([]contact, 0)
+	for _, name := range args {
+		contact := fetchContactByName(name, worker.Chat.FetchCrew())
+		if contact == nil {
+			output <- fmt.Sprintf("%s ist nicht in der Kontaktliste", name)
+			return
+		}
+		if contact.CrewID != 0 {
+			//this is a linked contact.
+			var crew crew
+			database.First(&crew, contact.CrewID)
+			ringingCrews = append(ringingCrews, crew)
+		} else {
+			ringingNSCs = append(ringingNSCs, *contact)
+		}
+	}
+	//we have a list of contacts and crews.
+	conferences.call(worker.Chat.FetchCrew(), ringingCrews, ringingNSCs)
+	worker.Chat.sendMessage("Verbindung wird aufgebaut. Befehlsliste aktualisiert: mit /hangup Konferenz beenden.")
+	worker.Commands = []botCommand{
+		botHelpCmd{},
+		botHangupCmd{},
+	}
 }
 
 // /accept implementation
@@ -55,6 +80,7 @@ func (cmd botRejectCmd) Description() string {
 func (cmd botRejectCmd) Execute(worker *automationworker, args []string) {
 	worker.setDefaultCommandSet()
 	worker.Chat.sendMessage("Verbindung abgelehnt.")
+	conferences.rejectCall(worker.Chat.FetchCrew())
 }
 
 // /hangup implementation
