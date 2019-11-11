@@ -17,8 +17,8 @@ func (cmd botCallCmd) Description() string {
 }
 
 func (cmd botCallCmd) Execute(worker *automationworker, args []string) {
-	var ringingCrews []crew = make([]crew, 0)
-	var ringingNSCs []contact = make([]contact, 0)
+	var ringingCrews = make([]crew, 0)
+	var ringingNSCs = make([]contact, 0)
 	for _, name := range args {
 		contact := fetchContactByName(name, worker.Chat.FetchCrew())
 		if contact == nil {
