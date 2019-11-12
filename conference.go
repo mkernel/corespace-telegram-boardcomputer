@@ -27,8 +27,19 @@ func (mgr *conferenceMgr) setup() {
 
 func (mgr *conferenceMgr) call(origin crew, crews []crew, nscs []contact) {
 	conference := conference{InvolvedCrews: []crew{origin}, InvolvedNSCs: nscs, RingingCrews: crews}
-	//TODO: set up ringing for everyone
-	//TODO: generate join call for all NSCs. ?
+	for _, crew := range conference.RingingCrews {
+		worker := automationqueues[crew.ChatID]
+		worker.setCommandSet([]botCommand{
+			botHelpCmd{},
+			botAcceptCmd{},
+			botRejectCmd{},
+		})
+		worker.Chat.sendMessage(fmt.Sprintf("Eingehende Konferenzanfrage von %s. Mit /accept annehmen, mit /reject ablehnen.", origin.Name))
+
+	}
+	for _, contact := range nscs {
+		conference.transmitForContact(contact, "*SYSTEM* Verbindung hergestellt.")
+	}
 	mgr.Conferences = append(mgr.Conferences, conference)
 }
 
@@ -73,7 +84,6 @@ func (mgr *conferenceMgr) rejectCall(crew crew) {
 		return
 	}
 	conference.reject(crew)
-	//TODO: should we tell people of the rejection? not sure...
 }
 
 func (mgr *conferenceMgr) hangup(crew crew) {
@@ -82,7 +92,16 @@ func (mgr *conferenceMgr) hangup(crew crew) {
 		return
 	}
 	conference.hangup(crew)
-	//TODO: check if there are crews left. if not, discard the conference. if there are ringing crews left: clear them up.
+	if len(conference.InvolvedCrews) == 1 {
+		for _, crew := range conference.RingingCrews {
+			conference.reject(crew)
+		}
+		crew := conference.InvolvedCrews[0]
+		var chat chat
+		database.First(&chat, crew.ChatID)
+		chat.sendMessage("Die Konferenz ist beendet.")
+		conference.hangup(crew)
+	}
 }
 
 func (mgr *conferenceMgr) isCrewInOngoingCall(crew crew) bool {
@@ -114,6 +133,11 @@ func (cf *conference) accept(crew crew) {
 		if ringing.ID == crew.ID {
 			cf.RingingCrews = append(cf.RingingCrews[:i], cf.RingingCrews[i+1:]...)
 			cf.InvolvedCrews = append(cf.InvolvedCrews, crew)
+			worker := automationqueues[crew.ChatID]
+			worker.setCommandSet([]botCommand{
+				botHelpCmd{},
+				botHangupCmd{},
+			})
 			return
 		}
 	}
@@ -122,7 +146,10 @@ func (cf *conference) accept(crew crew) {
 func (cf *conference) reject(crew crew) {
 	for i, calling := range cf.RingingCrews {
 		if calling.ID == crew.ID {
+			cf.transmitForCrew(crew, "*SYSTEM* Verbindungsaufbau abgelehnt.")
 			cf.RingingCrews = append(cf.RingingCrews[:i], cf.RingingCrews[i+1:]...)
+			worker := automationqueues[crew.ChatID]
+			worker.setDefaultCommandSet()
 			return
 		}
 	}
@@ -132,6 +159,9 @@ func (cf *conference) hangup(crew crew) {
 	for i, calling := range cf.InvolvedCrews {
 		if calling.ID == crew.ID {
 			cf.InvolvedCrews = append(cf.InvolvedCrews[:i], cf.InvolvedCrews[i+1:]...)
+			cf.transmitForCrew(crew, "*SYSTEM* Verbindung beendet.")
+			worker := automationqueues[crew.ChatID]
+			worker.setDefaultCommandSet()
 			return
 		}
 	}

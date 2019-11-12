@@ -36,11 +36,11 @@ func (cmd botCallCmd) Execute(worker *automationworker, args []string) {
 	}
 	//we have a list of contacts and crews.
 	conferences.call(worker.Chat.FetchCrew(), ringingCrews, ringingNSCs)
-	worker.Chat.sendMessage("Verbindung wird aufgebaut. Befehlsliste aktualisiert: mit /hangup Konferenz beenden.")
 	worker.Commands = []botCommand{
 		botHelpCmd{},
 		botHangupCmd{},
 	}
+	worker.Chat.sendMessage("Verbindung wird aufgebaut. Befehlsliste aktualisiert: mit /hangup Konferenz beenden.")
 }
 
 // /accept implementation
@@ -57,10 +57,6 @@ func (cmd botAcceptCmd) Description() string {
 
 func (cmd botAcceptCmd) Execute(worker *automationworker, args []string) {
 	conferences.acceptCall(worker.Chat.FetchCrew())
-	worker.Commands = []botCommand{
-		botHelpCmd{},
-		botHangupCmd{},
-	}
 	worker.Chat.sendMessage("Verbindung hergestellt. Alles geschriebene wird an alle Gesprächsteilnehmer übertragen. Mit /hangup kann die Verbindung getrennt werden.")
 	conferences.transmitFromCrew(worker.Chat.FetchCrew(), "*SYSTEM* Verbindung hergestellt.")
 }
