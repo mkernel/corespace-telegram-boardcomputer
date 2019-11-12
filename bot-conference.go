@@ -93,5 +93,6 @@ func (cmd botHangupCmd) Description() string {
 
 func (cmd botHangupCmd) Execute(worker *automationworker, args []string) {
 	conferences.transmitFromCrew(worker.Chat.FetchCrew(), "*SYSTEM* Verbindung getrennt.")
+	worker.Chat.sendMessage("Verbindung getrennt.")
 	conferences.hangup(worker.Chat.FetchCrew())
 }

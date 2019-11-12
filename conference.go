@@ -26,9 +26,14 @@ func (mgr *conferenceMgr) setup() {
 }
 
 func (mgr *conferenceMgr) call(origin crew, crews []crew, nscs []contact) {
+	originworker := automationqueues[origin.ChatID]
+	originworker.Chat.OpenConnection = true
+	database.Save(&originworker.Chat)
 	conference := conference{InvolvedCrews: []crew{origin}, InvolvedNSCs: nscs, RingingCrews: crews}
 	for _, crew := range conference.RingingCrews {
 		worker := automationqueues[crew.ChatID]
+		worker.Chat.OpenConnection = true
+		database.Save(&worker.Chat)
 		worker.setCommandSet([]botCommand{
 			botHelpCmd{},
 			botAcceptCmd{},
