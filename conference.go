@@ -151,6 +151,10 @@ func (cf *conference) accept(crew crew) {
 func (cf *conference) reject(crew crew) {
 	for i, calling := range cf.RingingCrews {
 		if calling.ID == crew.ID {
+			var chat chat
+			database.First(&chat, crew.ChatID)
+			chat.OpenConnection = false
+			database.Save(&chat)
 			cf.transmitForCrew(crew, "*SYSTEM* Verbindungsaufbau abgelehnt.")
 			cf.RingingCrews = append(cf.RingingCrews[:i], cf.RingingCrews[i+1:]...)
 			worker := getWorker(crew.ChatID)
@@ -163,6 +167,10 @@ func (cf *conference) reject(crew crew) {
 func (cf *conference) hangup(crew crew) {
 	for i, calling := range cf.InvolvedCrews {
 		if calling.ID == crew.ID {
+			var chat chat
+			database.First(&chat, crew.ChatID)
+			chat.OpenConnection = false
+			database.Save(&chat)
 			cf.InvolvedCrews = append(cf.InvolvedCrews[:i], cf.InvolvedCrews[i+1:]...)
 			cf.transmitForCrew(crew, "*SYSTEM* Verbindung beendet.")
 			worker := getWorker(crew.ChatID)
