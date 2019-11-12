@@ -92,15 +92,15 @@ func (mgr *conferenceMgr) hangup(crew crew) {
 		return
 	}
 	conference.hangup(crew)
-	if len(conference.InvolvedCrews) == 1 {
+	if len(conference.InvolvedCrews) == 0 {
 		for _, crew := range conference.RingingCrews {
 			conference.reject(crew)
 		}
-		crew := conference.InvolvedCrews[0]
-		var chat chat
-		database.First(&chat, crew.ChatID)
-		chat.sendMessage("Die Konferenz ist beendet.")
-		conference.hangup(crew)
+		for i, conf := range mgr.Conferences {
+			if len(conf.InvolvedCrews) == 0 && len(conf.RingingCrews) == 0 {
+				mgr.Conferences = append(mgr.Conferences[:i], mgr.Conferences[i+1:]...)
+			}
+		}
 	}
 }
 
