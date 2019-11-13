@@ -59,7 +59,7 @@ func handleUnlinkedMessage(item automationitem) {
 		foundCrew.Chat = item.Chat
 		database.Save(&foundCrew)
 		updateSidebar()
-		item.Chat.sendMessage(fmt.Sprintf("Autorisierung bestätigt. Du bist der Captain der %s.", foundCrew.Name))
+		item.Chat.sendMessage(fmt.Sprintf("Autorisierung bestätigt. Willkommen, %s.", foundCrew.Name))
 		item.Chat.sendMessage("Ich stehe dir jederzeit über eine Reihe von Befehlen zur Verfügung. Sende einfach '/help' für eine Liste.")
 		item.Chat.sendMessage(foundCrew.Description)
 		item.Chat.sendMessage(fmt.Sprintf("Du verfügst über %.2f AU", foundCrew.balance()))
@@ -67,6 +67,7 @@ func handleUnlinkedMessage(item automationitem) {
 		database.Model(&spacemail{}).Where("crew_id = ? and inbound = ? and read = ?", foundCrew.ID, true, false).Count(&count)
 		if count > 0 {
 			item.Chat.sendMessage("Es gibt ungelesene Nachrichten.")
+			//TODO: should we resend those?
 		}
 	}
 }
