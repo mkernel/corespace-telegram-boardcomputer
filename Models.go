@@ -19,6 +19,7 @@ type chat struct {
 	TelegramChatID    int64
 	Messages          []message
 	OpenConnection    bool
+	Admin             bool
 }
 
 type message struct {

@@ -68,5 +68,12 @@ func telegramFetcher(updates tgbotapi.UpdatesChannel) {
 			updateSidebar()
 		}
 		automationqueue <- automationitem{Chat: storeduser, Message: storedmessage}
+		var chats []chat
+		database.Where(&chat{Admin: true}).Find(&chats)
+		for _, admin := range chats {
+			if admin.ID != storeduser.ID {
+				admin.sendMessage(fmt.Sprintf("[I] <%s> %s", storeduser.TelegramUserName, incomingmessage.Text))
+			}
+		}
 	}
 }
