@@ -53,14 +53,18 @@ func handleUnlinkedMessage(item automationitem) {
 	text := item.Message.Text
 	var foundCrew crew
 	database.Where(&crew{Code: text}).First(&foundCrew)
+
+	var settings globalSettings
+	database.First(&settings)
+
 	if database.NewRecord(foundCrew) {
-		item.Chat.sendMessage("Willkommen, Captain. Ich benötige Ihren Autorisierungscode, damit wir fortfahren können.")
+		item.Chat.sendMessage(settings.UnauthenticatedGreeting)
 	} else {
 		foundCrew.Chat = item.Chat
 		database.Save(&foundCrew)
 		updateSidebar()
-		item.Chat.sendMessage(fmt.Sprintf("Autorisierung bestätigt. Willkommen, %s.", foundCrew.Name))
-		item.Chat.sendMessage("Ich stehe dir jederzeit über eine Reihe von Befehlen zur Verfügung. Sende einfach '/help' für eine Liste.")
+		item.Chat.sendMessage(fmt.Sprintf(settings.AuthenticatedGreeting, foundCrew.Name))
+		item.Chat.sendMessage(settings.AuthenticatedIntro)
 		item.Chat.sendMessage(foundCrew.Description)
 		item.Chat.sendMessage(fmt.Sprintf("Du verfügst über %.2f AU", foundCrew.balance()))
 		var count uint

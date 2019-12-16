@@ -6,8 +6,11 @@ import (
 
 type globalSettings struct {
 	gorm.Model
-	APIKey    string
-	APIOffset int
+	APIKey                  string
+	APIOffset               int
+	UnauthenticatedGreeting string
+	AuthenticatedGreeting   string
+	AuthenticatedIntro      string
 }
 
 type chat struct {
@@ -101,6 +104,9 @@ func setupDatabase(db *gorm.DB) {
 	database.First(&settings)
 	if database.NewRecord(settings) {
 		//we have no dataset.
+		settings.UnauthenticatedGreeting = "Willkommen, Captain. Ich benötige Ihren Autorisierungscode, damit wir fortfahren können."
+		settings.AuthenticatedGreeting = "Autorisierung bestätigt. Willkommen, %s."
+		settings.AuthenticatedIntro = "Ich stehe dir jederzeit über eine Reihe von Befehlen zur Verfügung. Sende einfach '/help' für eine Liste."
 		database.Create(&settings)
 	}
 }
