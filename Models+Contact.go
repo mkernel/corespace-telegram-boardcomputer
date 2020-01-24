@@ -28,7 +28,7 @@ func (me contact) sendMessageToContact(text string) {
 		mirrorcontact.sendMessageToCrew(text)
 	}
 	if me.isCurrent() {
-		output <- mail.toString()
+		output(func(print printer) { print(mail.toString()) })
 	}
 }
 
@@ -36,7 +36,7 @@ func (me contact) sendMessageToCrew(text string) {
 	mirrormail := spacemail{CrewID: me.OwnerID, ContactID: me.ID, Inbound: true, Read: false, Date: int(time.Now().Unix()), Text: text}
 	database.Create(&mirrormail)
 	if me.isCurrent() {
-		output <- mirrormail.toString()
+		output(func(print printer) { print(mirrormail.toString()) })
 	}
 	var crew crew
 	database.Preload("Chat").First(&crew, me.OwnerID)

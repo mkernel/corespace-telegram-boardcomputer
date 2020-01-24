@@ -24,10 +24,14 @@ func (automationCmd) Execute(args []string) error {
 	}
 	if args[0] == "enable" {
 		automationenabled[activeChatID] = true
-		output <- "(automation enabled)"
+		output(func(printer printer) {
+			printer("(automation enabled)")
+		})
 	} else if args[0] == "disable" {
 		automationenabled[activeChatID] = false
-		output <- "(automation disabled)"
+		output(func(printer printer) {
+			printer("(automation disabled)")
+		})
 	}
 	return nil
 }

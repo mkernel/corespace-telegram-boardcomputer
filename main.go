@@ -13,7 +13,6 @@ import (
 var outputView *gocui.View
 var sidebar *gocui.View
 var database *gorm.DB
-var output chan string
 var ui *gocui.Gui
 var inputfocus *cmdlinesink
 
@@ -22,10 +21,13 @@ var activeCrewID uint
 var activeContactID uint
 
 func main() {
-	output = make(chan string, 100)
 	filename := os.Args[1]
 	database, _ = gorm.Open("sqlite3", filename)
-
+	g, _ := gocui.NewGui(gocui.OutputNormal)
+	ui = g
+	g.Cursor = true
+	g.SetManagerFunc(layout)
+	g.SetKeybinding("commandline", gocui.KeyEnter, gocui.ModNone, operatecommand)
 	setupDatabase(database)
 	setupAutomation()
 	setupTelegram()
@@ -40,27 +42,19 @@ func main() {
 		database.Save(&chat)
 		chat.sendMessage("Die Verbindung wurde unterbrochen")
 	}
-	g, _ := gocui.NewGui(gocui.OutputNormal)
-	ui = g
-	g.Cursor = true
-	g.SetManagerFunc(layout)
-	g.SetKeybinding("commandline", gocui.KeyEnter, gocui.ModNone, operatecommand)
-	go writeOutput(g)
 	g.MainLoop()
 	g.Close()
 }
 
-func writeOutput(g *gocui.Gui) {
-	for msg := range output {
-		updating := true
-		g.Update(func(g *gocui.Gui) error {
-			fmt.Fprintln(outputView, msg)
-			updating = false
-			return nil
+type printer func(string)
+
+func output(context func(printer printer)) {
+	ui.Update(func(g *gocui.Gui) error {
+		context(func(line string) {
+			fmt.Fprintln(outputView, line)
 		})
-		for updating {
-		}
-	}
+		return nil
+	})
 }
 
 func operatecommand(g *gocui.Gui, v *gocui.View) error {

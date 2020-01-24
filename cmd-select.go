@@ -28,7 +28,9 @@ func (selectCmd) Execute(args []string) error {
 		outputView.SetOrigin(0, 0)
 		outputView.SetCursor(0, 0)
 		outputView.Clear()
-		output <- "Back to the machine room"
+		output(func(print printer) {
+			print("Back to the machine room")
+		})
 		return nil
 	}
 
@@ -36,7 +38,9 @@ func (selectCmd) Execute(args []string) error {
 	var count uint
 	database.Model(&chat{}).Where("telegram_user_name = ?", args[0]).First(&user).Count(&count)
 	if count == 0 {
-		output <- "No chat with that name present"
+		output(func(print printer) {
+			print("No chat with that name present")
+		})
 	} else {
 		activeContactID = 0
 		activeChatID = user.ID

@@ -41,7 +41,7 @@ func (this_chat chat) sendMessage(text string) {
 	newmsg := message{Inbound: false, ChatID: this_chat.ID, Text: text, Read: true, Date: int(time.Now().Unix())}
 	database.Create(&newmsg)
 	if activeChatID == this_chat.ID {
-		output <- newmsg.toString()
+		output(func(print printer) { print(newmsg.toString()) })
 	}
 	if this_chat.Admin == false {
 		var chats []chat

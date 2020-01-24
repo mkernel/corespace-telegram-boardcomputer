@@ -22,7 +22,9 @@ func (cmd botCallCmd) Execute(worker *automationworker, args []string) {
 	for _, name := range args {
 		contact := fetchContactByName(name, worker.Chat.FetchCrew())
 		if contact == nil {
-			output <- fmt.Sprintf("%s ist nicht in der Kontaktliste", name)
+			output(func(printer printer) {
+				printer(fmt.Sprintf("%s ist nicht in der Kontaktliste", name))
+			})
 			return
 		}
 		if contact.CrewID != 0 {

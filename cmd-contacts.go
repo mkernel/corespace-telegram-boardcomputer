@@ -17,12 +17,14 @@ func (contactsCmd) Description() string {
 }
 
 func (contactsCmd) Help(args []string) {
-	output <- "contacts select NAME - selects the current contact"
-	output <- "contacts new NAME - creates a new contact"
-	output <- "contacts link NAME CREWID - creates a new contact as a proxy to another crew"
-	output <- "contacts rm NAME - removes a contact"
-	output <- "contacts update NAME - updates the description of a contact"
-	output <- "contacts info NAME - lists description of contact"
+	output(func(printer printer) {
+		printer("contacts select NAME - selects the current contact")
+		printer("contacts new NAME - creates a new contact")
+		printer("contacts link NAME CREWID - creates a new contact as a proxy to another crew")
+		printer("contacts rm NAME - removes a contact")
+		printer("contacts update NAME - updates the description of a contact")
+		printer("contacts info NAME - lists description of contact")
+	})
 }
 
 func (cmd contactsCmd) Execute(args []string) error {
@@ -72,7 +74,9 @@ func (cmd contactsCmd) cmdNew(args []string) error {
 	cmd.Name = args[0]
 	var casted cmdlinesink = cmd
 	inputfocus = &casted
-	output <- "Description?"
+	output(func(printer printer) {
+		printer("Description?")
+	})
 	return nil
 }
 
@@ -101,7 +105,9 @@ func (cmd contactsCmd) cmdUpdate(args []string) error {
 	cmd.ContactID = hit.ID
 	var casted cmdlinesink = cmd
 	inputfocus = &casted
-	output <- "Description?"
+	output(func(printer printer) {
+		printer("Description?")
+	})
 	return nil
 }
 
@@ -109,18 +115,24 @@ func (contactsCmd) cmdInfo(args []string) error {
 	var hit contact
 	filter := contact{OwnerID: activeCrewID, Name: args[0]}
 	database.Where(&filter).First(&hit)
-	output <- hit.Description
+	output(func(printer printer) {
+		printer(hit.Description)
+	})
 	return nil
 }
 
 func (cmd contactsCmd) TextEntered(data string) error {
 	if cmd.Mode == "new" {
-		output <- data
+		output(func(printer printer) {
+			printer(data)
+		})
 		contact := contact{OwnerID: activeCrewID, Name: cmd.Name, Description: data}
 		database.Create(&contact)
 		updateSidebar()
 	} else if cmd.Mode == "update" {
-		output <- data
+		output(func(printer printer) {
+			printer(data)
+		})
 		var contact contact
 		database.First(&contact, cmd.ContactID)
 		contact.Description = data

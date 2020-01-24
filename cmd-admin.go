@@ -26,10 +26,14 @@ func (adminCmd) Execute(args []string) error {
 	database.First(&chat, activeChatID)
 	if args[0] == "enable" {
 		chat.Admin = true
-		output <- "(admin enabled)"
+		output(func(printer printer) {
+			printer("(admin enabled)")
+		})
 	} else if args[0] == "disable" {
 		chat.Admin = false
-		output <- "(admin disabled)"
+		output(func(printer printer) {
+			printer("(admin disabled)")
+		})
 	}
 	database.Save(&chat)
 	return nil

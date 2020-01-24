@@ -19,8 +19,10 @@ func (txCmd) Description() string {
 }
 
 func (txCmd) Help(args []string) {
-	output <- "tx ls - lists all transactions and the balance"
-	output <- "tx new VALUE - creates a new transaction"
+	output(func(print printer) {
+		print("tx ls - lists all transactions and the balance")
+		print("tx new VALUE - creates a new transaction")
+	})
 }
 
 func (cmd txCmd) Execute(args []string) error {
@@ -40,12 +42,15 @@ func (txCmd) ls(args []string) error {
 	filter := transaction{CrewID: activeCrewID}
 	database.Where(&filter).Order("date asc").Find(&transactions)
 	var balance float64
-	for _, tx := range transactions {
-		output <- fmt.Sprintf("%.2f - %s", tx.Value, tx.Description)
-		balance += tx.Value
-	}
-	output <- "---"
-	output <- fmt.Sprintf("Balance: %.2f", balance)
+	output(func(print printer) {
+		for _, tx := range transactions {
+			print(fmt.Sprintf("%.2f - %s", tx.Value, tx.Description))
+			balance += tx.Value
+		}
+		print("---")
+		print(fmt.Sprintf("Balance: %.2f", balance))
+
+	})
 	return nil
 }
 
@@ -53,12 +58,16 @@ func (cmd txCmd) new(args []string) error {
 	cmd.Amount, _ = strconv.ParseFloat(args[0], 64)
 	var casted cmdlinesink = cmd
 	inputfocus = &casted
-	output <- "Description?"
+	output(func(print printer) {
+		print("Description?")
+	})
 	return nil
 }
 
 func (cmd txCmd) TextEntered(data string) error {
-	output <- data
+	output(func(print printer) {
+		print(data)
+	})
 	tx := transaction{Date: int(time.Now().Unix()), CrewID: activeCrewID, Value: cmd.Amount, Description: data}
 	database.Create(&tx)
 	return nil

@@ -22,15 +22,18 @@ func (membersCmd) Description() string {
 }
 
 func (membersCmd) Help(args []string) {
-	output <- "members ls - lists all members"
-	output <- "members rm ID - removes a member"
-	output <- "members new - creates a new member"
-	output <- "members update ID - updates the image of a member"
+	output(func(print printer) {
+		print("members ls - lists all members")
+		print("members rm ID - removes a member")
+		print("members new - creates a new member")
+		print("members update ID - updates the image of a member")
+
+	})
 }
 
 func (command membersCmd) Execute(args []string) error {
 	if activeCrewID == 0 {
-		output <- "no crew selected"
+		output(func(print printer) { print("no crew selected") })
 	}
 	if args[0] == "ls" {
 		return command.ls(args[1:])
@@ -48,9 +51,11 @@ func (membersCmd) ls(args []string) error {
 	var members []member
 	filter := member{CrewID: activeCrewID}
 	database.Where(&filter).Find(&members)
-	for _, member := range members {
-		output <- fmt.Sprintf("%d: %s", member.ID, member.Name)
-	}
+	output(func(print printer) {
+		for _, member := range members {
+			print(fmt.Sprintf("%d: %s", member.ID, member.Name))
+		}
+	})
 	return nil
 }
 
@@ -60,7 +65,9 @@ func (membersCmd) rm(args []string) error {
 	id, _ = strconv.Atoi(args[0])
 	database.First(&member, uint(id))
 	database.Delete(&member)
-	output <- fmt.Sprintf("%s deleted.", member.Name)
+	output(func(print printer) {
+		print(fmt.Sprintf("%s deleted.", member.Name))
+	})
 	return nil
 }
 
@@ -69,7 +76,9 @@ func (command membersCmd) new(args []string) error {
 	command.Name = ""
 	var casted cmdlinesink = command
 	inputfocus = &casted
-	output <- "Name?"
+	output(func(print printer) {
+		print("Name?")
+	})
 	return nil
 }
 
@@ -79,7 +88,9 @@ func (command membersCmd) update(args []string) error {
 	command.MemberID = uint(id)
 	var casted cmdlinesink = command
 	inputfocus = &casted
-	output <- "Full path to new Character Board (PNG only)?"
+	output(func(print printer) {
+		print("Full path to new Character Board (PNG only)?")
+	})
 	return nil
 }
 
@@ -87,12 +98,13 @@ func (command membersCmd) TextEntered(data string) error {
 	if command.Mode == "new" {
 		if command.Name == "" {
 			command.Name = data
-			output <- data
-			output <- "Full path to Character Board (PNG only)?"
+			output(func(print printer) {
+				print(data)
+				print("Full path to Character Board (PNG only)?")
+			})
 			var casted cmdlinesink = command
 			inputfocus = &casted
 		} else {
-			output <- data
 			newMember := member{CrewID: activeCrewID, Name: command.Name}
 			database.Save(&newMember)
 			filename := newMember.Filename()
@@ -101,10 +113,12 @@ func (command membersCmd) TextEntered(data string) error {
 			destination, _ := os.Create(filename)
 			defer destination.Close()
 			io.Copy(destination, source)
-			output <- "Member created"
+			output(func(print printer) {
+				print(data)
+				print("Member created")
+			})
 		}
 	} else if command.Mode == "update" {
-		output <- data
 		var member member
 		database.First(&member, command.MemberID)
 		filename := member.Filename()
@@ -114,7 +128,10 @@ func (command membersCmd) TextEntered(data string) error {
 		destination, _ := os.Create(filename)
 		defer destination.Close()
 		io.Copy(destination, source)
-		output <- "Member updated"
+		output(func(print printer) {
+			print(data)
+			print("Member updated")
+		})
 	}
 	return nil
 }

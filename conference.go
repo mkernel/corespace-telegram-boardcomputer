@@ -193,7 +193,7 @@ func (cf *conference) transmitForCrew(crew crew, text string) {
 		database.Create(&spacemail)
 		updateSidebar()
 		if contact.ID == activeContactID {
-			output <- spacemail.toString()
+			output(func(print printer) { print(spacemail.toString()) })
 		}
 	}
 }
@@ -215,7 +215,7 @@ func (cf *conference) transmitForContact(contact contact, text string) {
 			database.Create(&spacemail)
 			updateSidebar()
 			if contact.ID == activeContactID {
-				output <- spacemail.toString()
+				output(func(print printer) { print(spacemail.toString()) })
 			}
 		}
 	}

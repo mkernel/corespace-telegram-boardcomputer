@@ -15,21 +15,27 @@ func setupTelegram() {
 	if settings.APIKey != "" {
 		var err error
 		tgbot, err = tgbotapi.NewBotAPI(settings.APIKey)
-		if err != nil {
-			output <- "unable to connect to telegram"
-		} else {
-			output <- fmt.Sprintf("Telegram Identity: %s", tgbot.Self.UserName)
-		}
+		output(func(print printer) {
+			if err != nil {
+				print("unable to connect to telegram")
+			} else {
+				print(fmt.Sprintf("Telegram Identity: %s", tgbot.Self.UserName))
+			}
+		})
 		u := tgbotapi.NewUpdate(settings.APIOffset)
 		u.Timeout = 60
 		var botupdates tgbotapi.UpdatesChannel
 		botupdates, err = tgbot.GetUpdatesChan(u)
-		if err != nil {
-			output <- "unable to establish updates connection"
-		}
+		output(func(print printer) {
+			if err != nil {
+				print("unable to establish updates connection")
+			}
+		})
 		go telegramFetcher(botupdates)
 	} else {
-		output <- "No Telegram API key set. SEt one and restart in order to start operations."
+		output(func(print printer) {
+			print("No Telegram API key set. SEt one and restart in order to start operations.")
+		})
 	}
 }
 
@@ -63,7 +69,7 @@ func telegramFetcher(updates tgbotapi.UpdatesChannel) {
 		storedmessage := message{Inbound: true, Text: incomingmessage.Text, Date: int(time.Now().Unix()), ChatID: storeduser.ID, Read: false}
 		database.Create(&storedmessage)
 		if activeChatID == storeduser.ID {
-			output <- storedmessage.toString()
+			output(func(print printer) { print(storedmessage.toString()) })
 		} else {
 			updateSidebar()
 		}

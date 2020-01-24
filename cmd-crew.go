@@ -20,11 +20,14 @@ func (crewCmd) Description() string {
 }
 
 func (crewCmd) Help(_ []string) {
-	output <- "crew ls – list all crews"
-	output <- "crew new - creates a new crew"
-	output <- "crew rm ID - deletes a crew"
-	output <- "crew select ID - selects the active crew"
-	output <- "crew status - updates the status of the active crew"
+	output(func(print printer) {
+		print("crew ls – list all crews")
+		print("crew rm ID - deletes a crew")
+		print("crew new - creates a new crew")
+		print("crew select ID - selects the active crew")
+		print("crew status - updates the status of the active crew")
+
+	})
 }
 
 func (command crewCmd) Execute(args []string) error {
@@ -53,10 +56,14 @@ func (command crewCmd) Execute(args []string) error {
 func (command crewCmd) status(args []string) error {
 	command.mode = "status"
 	if activeCrewID == 0 {
-		output <- "no crew selected"
+		output(func(print printer) {
+			print("no crew selected")
+		})
 		return nil
 	}
-	output <- "Enter new Crew Status"
+	output(func(print printer) {
+		print("Enter new Crew Status")
+	})
 	var casted cmdlinesink = command
 	inputfocus = &casted
 	return nil
@@ -78,10 +85,12 @@ func (crewCmd) selectCrew(args []string) error {
 func (crewCmd) ls(args []string) error {
 	var crews []crew
 	database.Find(&crews)
-	for _, crew := range crews {
-		output <- fmt.Sprintf("%d: %s (%s)", crew.ID, crew.Name, crew.Code)
-		output <- crew.Description
-	}
+	output(func(print printer) {
+		for _, crew := range crews {
+			print(fmt.Sprintf("%d: %s (%s)", crew.ID, crew.Name, crew.Code))
+			print(crew.Description)
+		}
+	})
 	return nil
 }
 
@@ -90,7 +99,9 @@ func (crewCmd) rm(args []string) error {
 	id, _ := strconv.Atoi(args[0])
 	database.First(&crew, id)
 	database.Delete(&crew)
-	output <- "Crew deleted."
+	output(func(print printer) {
+		print("Crew deleted.")
+	})
 	return nil
 }
 
@@ -98,7 +109,9 @@ func (command crewCmd) new(args []string) error {
 	command.mode = "new"
 	var casted cmdlinesink = command
 	inputfocus = &casted
-	output <- "Crew Name?"
+	output(func(print printer) {
+		print("Crew Name?")
+	})
 	return nil
 }
 
@@ -106,21 +119,28 @@ func (command crewCmd) TextEntered(data string) error {
 	if command.mode == "new" {
 		if command.NewName == "" {
 			command.NewName = data
-			output <- data
 			var casted cmdlinesink = command
 			inputfocus = &casted
-			output <- "Access Code?"
+			output(func(print printer) {
+				print(data)
+				print("Access Code?")
+
+			})
 		} else if command.NewCode == "" {
 			command.NewCode = data
-			output <- data
 			var casted cmdlinesink = command
 			inputfocus = &casted
-			output <- "Crew Status?"
+			output(func(print printer) {
+				print(data)
+				print("Crew Status?")
+			})
 		} else {
-			output <- data
 			crew := crew{Name: command.NewName, Description: data, Code: command.NewCode}
 			database.Create(&crew)
-			output <- fmt.Sprintf("Crew created with ID %d", crew.ID)
+			output(func(print printer) {
+				print(data)
+				print(fmt.Sprintf("Crew created with ID %d", crew.ID))
+			})
 			command.NewCode = ""
 			command.NewName = ""
 			updateSidebar()
@@ -131,7 +151,9 @@ func (command crewCmd) TextEntered(data string) error {
 		database.First(&crew, activeCrewID)
 		crew.Description = data
 		database.Save(crew)
-		output <- data
+		output(func(print printer) {
+			print(data)
+		})
 	}
 
 	return nil

@@ -20,10 +20,12 @@ func (inventoryCmd) Description() string {
 }
 
 func (inventoryCmd) Help(args []string) {
-	output <- "inventory ls - lists the inventory"
-	output <- "inventory new - adds a new item to the inventory"
-	output <- "inventory rm ID - removes an item"
-	output <- "inventory update ID - updates the description of an item"
+	output(func(print printer) {
+		print("inventory ls - lists the inventory")
+		print("inventory new - adds a new item to the inventory")
+		print("inventory rm ID - removes an item")
+		print("inventory update ID - updates the description of an item")
+	})
 }
 
 func (cmd inventoryCmd) Execute(args []string) error {
@@ -46,10 +48,12 @@ func (inventoryCmd) ls(args []string) error {
 	var items []item
 	filtered := item{CrewID: activeCrewID}
 	database.Where(&filtered).Find(&items)
-	for _, item := range items {
-		output <- fmt.Sprintf("%d: %s", item.ID, item.Name)
-		output <- item.Description
-	}
+	output(func(print printer) {
+		for _, item := range items {
+			print(fmt.Sprintf("%d: %s", item.ID, item.Name))
+			print(item.Description)
+		}
+	})
 	return nil
 }
 
@@ -58,7 +62,9 @@ func (cmd inventoryCmd) new(args []string) error {
 	cmd.Name = ""
 	var casted cmdlinesink = cmd
 	inputfocus = &casted
-	output <- "Name?"
+	output(func(print printer) {
+		print("Name?")
+	})
 	return nil
 }
 
@@ -76,7 +82,9 @@ func (cmd inventoryCmd) update(args []string) error {
 	cmd.CurrentItem = uint(id)
 	var casted cmdlinesink = cmd
 	inputfocus = &casted
-	output <- "New Description?"
+	output(func(print printer) {
+		print("New Description?")
+	})
 	return nil
 }
 
@@ -84,12 +92,16 @@ func (cmd inventoryCmd) TextEntered(data string) error {
 	if cmd.Mode == "new" {
 		if cmd.Name == "" {
 			cmd.Name = data
-			output <- data
-			output <- "Description?"
+			output(func(print printer) {
+				print(data)
+				print("Description?")
+			})
 			var casted cmdlinesink = cmd
 			inputfocus = &casted
 		} else {
-			output <- data
+			output(func(print printer) {
+				print(data)
+			})
 			newItem := item{CrewID: activeCrewID, Name: cmd.Name, Description: data}
 			database.Save(&newItem)
 		}
@@ -97,7 +109,9 @@ func (cmd inventoryCmd) TextEntered(data string) error {
 		var item item
 		database.First(&item, cmd.CurrentItem)
 		item.Description = data
-		output <- data
+		output(func(print printer) {
+			print(data)
+		})
 		database.Save(&item)
 	}
 	return nil

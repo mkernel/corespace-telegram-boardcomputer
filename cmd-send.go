@@ -20,7 +20,9 @@ func (sendCmd) Help(_ []string) {
 
 func (sendcommand sendCmd) Execute(args []string) error {
 	if activeChatID == 0 && activeContactID == 0 {
-		output <- "You can only send a message with an active chat or contact"
+		output(func(print printer) {
+			print("You can only send a message with an active chat or contact")
+		})
 	} else {
 		var casted cmdlinesink = sendcommand
 		inputfocus = &casted
