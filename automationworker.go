@@ -49,7 +49,7 @@ func (worker *automationworker) work() {
 			args := strings.Split(message.Text, " ")
 			found := false
 			for _, cmd := range worker.Commands {
-				if cmd.Command() == args[0] {
+				if cmd.Command() == strings.ToLower(args[0]) {
 					cmd.Execute(worker, args[1:])
 					found = true
 					break
