@@ -17,7 +17,7 @@ import (
 var templates *template.Template
 
 func setupHTTP() {
-	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(web.FS(false))))
+	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(web.Dir(false, "/web/"))))
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets/"))))
 	http.HandleFunc("/", httpHandler)
 
