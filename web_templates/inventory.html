@@ -1,0 +1,7 @@
+{{ define "inventory"}}
+<ul class="alt">
+    {{ range . }}
+    <li>{{ .Name }} <blockquote class="small">{{ .Description}}</blockquote></li>
+    {{ end}}
+</ul>
+{{end}}

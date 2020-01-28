@@ -1,0 +1,29 @@
+{{ define "ships" }}
+<ul class="tabs left">
+{{range .}}
+<li><a href="#ship-{{.ID}}">{{ .Name }}</a></li>
+{{end}}
+</ul>
+{{range .}}
+<div id="ship-{{.ID}}" class="tab-content">
+    <div class="grid flex">
+        <div class="col_4">
+            <h4>Crew</h4>
+            {{ template "crew" .Members }}
+        </div>
+        <div class="col_4">
+            <h4>Inventory</h4>
+            {{ template "inventory" .Items }}
+            <h4>Transactions</h4>
+            {{ template "transactions" .Transactions }}
+        </div>
+        <div class="col_4">
+            <h4>Contacts</h4>
+            {{ template "contacts" .Contacts }}
+        </div>
+    </div>
+</div>
+{{end}}
+
+
+{{end }}

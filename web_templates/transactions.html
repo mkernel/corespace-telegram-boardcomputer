@@ -1,0 +1,7 @@
+{{ define "transactions" }}
+<ul class="alt">
+    {{ range . }}
+    <li> {{ .Value }}: {{ .Description }}</li>
+    {{ end }}
+</ul>
+{{ end }}

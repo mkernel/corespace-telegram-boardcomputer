@@ -4,18 +4,30 @@ import (
 	"bytes"
 	"html/template"
 	"net/http"
+
+	"github.com/mkernel/corespace-telegram-boardcomputer/web"
+	tmpl "github.com/mkernel/corespace-telegram-boardcomputer/web_templates"
 )
 
-//idea: embed the templates and the static html files using https://github.com/mjibson/esc/
+//This is made to work using https://github.com/mjibson/esc/
+
+//go:generate esc -o web/encoded.go -pkg web web
+//go:generate esc -o web_templates/encoded.go -pkg web_templates web_templates
+
 var templates *template.Template
 
 func setupHTTP() {
-	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("web/"))))
+	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(web.FS(false))))
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets/"))))
 	http.HandleFunc("/", httpHandler)
 
-	templates, _ = template.New("templates").ParseFiles("templates/page.html", "templates/ships.html", "templates/crew.html", "templates/inventory.html", "templates/transactions.html")
-
+	templates = template.New("page")
+	templates.Parse(tmpl.FSMustString(false, "/web_templates/page.html"))
+	templates.Parse(tmpl.FSMustString(false, "/web_templates/ships.html"))
+	templates.Parse(tmpl.FSMustString(false, "/web_templates/crew.html"))
+	templates.Parse(tmpl.FSMustString(false, "/web_templates/inventory.html"))
+	templates.Parse(tmpl.FSMustString(false, "/web_templates/transactions.html"))
+	templates.Parse(tmpl.FSMustString(false, "/web_templates/contacts.html"))
 	go http.ListenAndServe(":8181", nil)
 }
 
