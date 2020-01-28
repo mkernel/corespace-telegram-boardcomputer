@@ -31,6 +31,7 @@ func main() {
 	setupDatabase(database)
 	setupAutomation()
 	setupTelegram()
+	setupHTTP()
 
 	defer database.Close()
 	fillCommands()
