@@ -16,12 +16,25 @@ import (
 
 var templates *template.Template
 
+func transactionSum(txs []transaction) float64 {
+	var sum float64 = 0
+	for _, tx := range txs {
+		sum += tx.Value
+	}
+	return sum
+}
+
 func setupHTTP() {
 	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(web.Dir(false, "/web/"))))
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets/"))))
 	http.HandleFunc("/", httpHandler)
 
+	var fmap = template.FuncMap{
+		"sum": transactionSum,
+	}
+
 	templates = template.New("page")
+	templates.Funcs(fmap)
 	templates.Parse(tmpl.FSMustString(false, "/web_templates/page.html"))
 	templates.Parse(tmpl.FSMustString(false, "/web_templates/ships.html"))
 	templates.Parse(tmpl.FSMustString(false, "/web_templates/crew.html"))

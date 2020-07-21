@@ -213,7 +213,7 @@ var _escData = map[string]*_escFile{
 		name:    "contacts.html",
 		local:   "web_templates/contacts.html",
 		size:    170,
-		modtime: 1580234545,
+		modtime: 1580240278,
 		compressed: `
 H4sIAAAAAAAC/0TOQQ7CIBAF0D2n+OEA5QLIyrV3GOloiFPQAqsJdzc0sS5n8n7+V8XKj5QZNpbcKLZq
 MYbxXRCFar1YkmaDAQBV7JSfjGWS+fGSgiqWG22MMfxdSnx9emn8S9eNROyBrlzjnt4tlTyt++PgnaSz
@@ -225,7 +225,7 @@ g/N6THBdgjnvbwAAAP//FH5rv6oAAAA=
 		name:    "crew.html",
 		local:   "web_templates/crew.html",
 		size:    121,
-		modtime: 1580160572,
+		modtime: 1580240278,
 		compressed: `
 H4sIAAAAAAAC/xzMQaoDIQyA4f2cIuQAegHH1du8UxSrqQgxFDNDFyF3L3b98/1m0Og1hADrog+C+5Fu
 hspF9cTCF+bDDFaRThB25ZHTmB101RNjUaVL46T5pPUwC/9/7uEtHXOKPDYmadvFm38rkgbu3wAAAP//
@@ -237,7 +237,7 @@ dfajHnkAAAA=
 		name:    "encoded.go",
 		local:   "web_templates/encoded.go",
 		size:    0,
-		modtime: 1580240208,
+		modtime: 1595358637,
 		compressed: `
 H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 `,
@@ -247,7 +247,7 @@ H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 		name:    "inventory.html",
 		local:   "web_templates/inventory.html",
 		size:    167,
-		modtime: 1580160784,
+		modtime: 1580240278,
 		compressed: `
 H4sIAAAAAAAC/0SOUQrCMBBE/3uKIQdoLxDz5bd3iO0qi9uNNqkgy95dDKifM7xhnhkWurASAuuTtJXt
 FdyHuAtmybUeQpYW0gAAZtiyXgkj3HsThZMZxlNeCe6IZynz7bGXRt95XbNI6NSR6rzxvXFR9zj92RQn
@@ -259,7 +259,7 @@ FdyHuAtmybUeQpYW0gAAZtiyXgkj3HsThZMZxlNeCe6IZynz7bGXRt95XbNI6NSR6rzxvXFR9zj92RQn
 		name:    "page.html",
 		local:   "web_templates/page.html",
 		size:    772,
-		modtime: 1580160342,
+		modtime: 1580240278,
 		compressed: `
 H4sIAAAAAAAC/5xSTY/TMBA9b37F7JxJ3HKCxY6EloKEQCBtOXBCrj3bTOs4wXa7jaL+d5SPrQrigMjF
 mafn956fpu8tPbInwFZvCeF8zuTtuy/36+9fV1Cl2pWZfD5I2zK7kbd5Dp9X67eQ58OYODkqPx1MJ8X0
@@ -276,7 +276,7 @@ PHSXBAMAAA==
 		name:    "ships.html",
 		local:   "web_templates/ships.html",
 		size:    683,
-		modtime: 1580238869,
+		modtime: 1580240278,
 		compressed: `
 H4sIAAAAAAAC/6SSMWvDMBCF9/yK4zpHXjLaXtLFQzt1L4p0jgWyHKSL0yL034tSu9iBYkonHbz3vXcS
 ihE0tcYRYOjMJSCktCuvFpSVIVTI8hTAUstY72L00p0JRLZYU5cSOk9thU8Z3ccomueUsI4RxKvsCVIq
@@ -289,12 +289,12 @@ lRiBqb9YyQSoPN0QxAv1J/IhP8tPQKHN+Le+xo3kePCfG6Vm9iGIhqlf9c5hb166IBWbwYWNPF5YEcSS
 	"/web_templates/transactions.html": {
 		name:    "transactions.html",
 		local:   "web_templates/transactions.html",
-		size:    139,
-		modtime: 1580161284,
+		size:    162,
+		modtime: 1595358584,
 		compressed: `
-H4sIAAAAAAAC/zzMMQrDMAyF4d2nePgAyV5cTz1Dd+GoxSDUYtmT0d2DM2R8P49vThz8qcqIvZEalV5/
-ahHuIQ1BETJ7RpIecwCAOdFIv4xtXVZJUvPK25tkMNwf13qxlVb/i4N72qXeAOtx+fuQHO59BgAA//+t
-Nx8liwAAAA==
+H4sIAAAAAAAC/zzMsarDMAyF4T1PcfADJPslN1O37t2FrRaDKhfLnozevTiFjDr8+sZA4mdWRmiV1Ci2
+XNQC3Je9C6KQ2X8gaeFYAGAMVNIXY53JXHbJx5zXB0lnuP+d140t1vyZHNz3TfIFsKbT37ocy71oK9ZI
+0/yz/v7JV/YNAAD//z4teGiiAAAA
 `,
 	},
 
