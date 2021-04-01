@@ -1,0 +1,28 @@
+{{ define "tx-list"}}
+<a href="/admin">Zur&uuml;ck</a>
+<table>
+    <thead>
+        <tr>
+            <th>Beschreibung</th>
+            <th>Betrag</th>
+            <th>Kontostand</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range . }}
+        <tr>
+            <td>{{ .Tx.Description }}</td>
+            <td>{{ .Tx.Value }}</td>
+            <td>{{ .Rollingbalance }}</td>
+        </tr>
+        {{ end }}
+        <tr>
+            <form method="POST">
+                <td><input type="text" name="Description"></td>
+                <td><input type="number" name="Value"></td>
+                <td><input type="submit" value="Add"></td>
+            </form>
+        </tr>
+    </tbody>
+</table>
+{{ end }}

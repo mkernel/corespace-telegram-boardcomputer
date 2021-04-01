@@ -1,0 +1,29 @@
+{{ define "inventory-list"}}
+<a href="/admin">Zur&uuml;ck</a>
+<ul>
+    {{ range . }}
+    <li>{{ .Name }} <a href="/admin/inventory/edit?id={{.ID}}">Bearbeiten</a> <a href="/admin/inventory/delete?id={{.ID}}">L&ouml;schen</a> <p>{{ .Description }} </p></li>
+    {{ end }}
+    <li>
+        <form method="POST">
+            <input type="text" name="Name">
+            <p>
+            <textarea name="Description"></textarea>
+            </p>
+            <input type="submit" value="hinzuf&uuml;gen">
+        </form>
+    </li>
+</ul>
+{{ end }}
+
+{{ define "inventory-edit" }}
+<a href="/admin/inventory?id={{.CrewID}}">Zur&uuml;ck</a>
+<form method="POST">
+    <input type="text" name="Name" value="{{.Name}}">
+    <p>
+    <textarea name="Description">{{.Description}}</textarea>
+    </p>
+    <input type="submit" value="speichern">
+</form>
+
+{{ end }}

@@ -1,0 +1,25 @@
+{{ define "members-list" }}
+<a href="/admin">Zur&uuml;ck</a>
+<ul>
+    {{ range . }}
+    <li>
+        {{ .Name }} <a href="/admin/crew/delete?id={{.ID}}">L&ouml;schen</a> <br/>
+        <img src="/assets/member_{{.ID}}.png" width="300"/>
+        <form method="POST" enctype="multipart/form-data" >
+            <input type="hidden" value="update" name="operation">
+            <input type="hidden" value="{{.ID}}" name="id">
+            <input type="file" name="image">
+            <input type="submit" value="Aktualisieren">
+        </form>
+    </li>
+    {{ end }}
+    <li>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" value="create" name="operation">
+            <input type="text" name="name">
+            <input type="file" name="image">
+            <input type="submit" value="Hinzuf&uuml;gen">
+        </form>
+    </li>
+</ul>
+{{ end }}

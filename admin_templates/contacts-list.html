@@ -1,0 +1,39 @@
+{{ define "contacts-list" }}
+<a href="/admin">Zur&uuml;ck</a>
+<ul>
+    {{ range . }}
+    <li>{{ .Name }} <a href='/admin/contacts/chat?id={{.ID}}'>Chat</a> <a href='/admin/contacts/delete?id={{.ID}}'>L&ouml;schen</a>
+        <p>{{ .Description }}</p>
+    </li>
+    {{ end }}
+    <li>
+        <form method="POST">
+            <input type="text" name="name">
+            <textarea name="description"></textarea>
+            <input type="submit" value="Hinzuf&uuml;gen">
+        </form>
+    </li>
+</ul>
+{{ end }}
+{{ define "contacts-chat" }}
+<a href="/admin/contacts?id={{ .Crew }}">Zur&uuml;ck</a>
+<ul>
+    {{ $name := .Contact}}
+    {{ range .Messages }}
+    <li>
+        {{ if .Inbound }}
+        &lt;{{ $name }}&gt;
+        {{ else }}
+        &lt;Crew&gt;
+        {{ end }}
+        {{ .Text }}
+    </li>
+    {{ end }}
+    <li>
+        <form method="POST">
+            <textarea name="message"></textarea>
+            <input type="submit" value="Senden">
+        </form>
+    </li>
+</ul>
+{{ end }}

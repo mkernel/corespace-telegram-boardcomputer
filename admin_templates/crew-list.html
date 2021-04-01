@@ -1,0 +1,12 @@
+{{ define "crew-list" }}
+<ul>
+    {{ range .}}
+    <li>{{ .Name }} (<a href='/admin/crew?id={{.ID}}'>Crew</a> / 
+        <a href='/admin/inventory?id={{.ID}}'>Inventar</a> / 
+        <a href='/admin/transactions?id={{.ID}}'>Transaktionen</a> / 
+        <a href='/admin/status?id={{.ID}}'>Status</a> /
+        <a href='/admin/chat?id={{.ID}}'>Chat</a> /
+        <a href='/admin/contacts?id={{.ID}}'>Kontakte</a>)</li>
+    {{ end }}
+</ul>
+{{ end }}

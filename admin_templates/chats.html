@@ -1,0 +1,21 @@
+{{ define "chats" }}
+<a href="/admin">Zur&uuml;ck</a>
+<ul>
+    {{ range . }}
+    <li>
+        {{ if .Inbound }}
+        &lt;User&gt;
+        {{ else }}
+        &lt;Bot&gt;
+        {{ end }}
+        {{ .Text }}
+    </li>
+    {{ end }}
+    <li>
+        <form method="POST">
+            <textarea name="message"></textarea>
+            <input type="submit" value="Senden">
+        </form>
+    </li>
+</ul>
+{{ end }}

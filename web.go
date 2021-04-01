@@ -13,6 +13,7 @@ import (
 
 //go:generate esc -o web/encoded.go -pkg web web
 //go:generate esc -o web_templates/encoded.go -pkg web_templates web_templates
+//go:generate esc -o admin_templates/encoded.go -pkg admin_templates admin_templates
 
 var templates *template.Template
 
