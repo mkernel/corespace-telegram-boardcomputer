@@ -57,7 +57,7 @@ func handleUnlinkedMessage(item automationitem) {
 	var settings globalSettings
 	database.First(&settings)
 
-	if database.NewRecord(foundCrew) {
+	if text == "" || database.NewRecord(foundCrew) || foundCrew.Code != text {
 		item.Chat.sendMessage(settings.UnauthenticatedGreeting)
 	} else {
 		foundCrew.Chat = item.Chat
